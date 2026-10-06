@@ -185,6 +185,10 @@
     linked,
     formatCode,
     code: () => (linked() ? formatCode(meta().code) : ''),
+    rawCode: () => (linked() ? meta().code : ''),
+    // Đường link để gửi cho thiết bị khác: mở link một lần là tự kết nối vào gia đình
+    joinLink: () => (linked() ? location.href.split('#')[0] + '#/join/' + meta().code : ''),
+    normalizeCode,
     status: () => (enabled() ? (linked() ? (status === 'off' ? 'idle' : status) : 'off') : 'off'),
     lastSync: () => meta().last,
     lastError: () => lastError,

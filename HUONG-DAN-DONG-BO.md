@@ -68,19 +68,22 @@ Luật này chỉ cho đọc và ghi đúng từng hồ sơ khi biết "mã gia 
 ## Phần 6. Dùng
 
 **Máy đầu tiên** (máy bé đã chơi nhiều nhất):
-1. Mở app, chọn bất kỳ người chơi, ở màn "Ai đang chơi nào?" bấm **Sao lưu & khôi phục**, nhập mật khẩu.
-2. Bấm **✨ Tạo mã gia đình**. App hiện mã dạng `ABCD-EFGH-JKMN-PQRS-TUVW`. Chép mã này lại và giữ riêng tư.
+1. Mở app, ở màn "Ai đang chơi nào?" bấm **Sao lưu & khôi phục**, nhập mật khẩu.
+2. Bấm **✨ Tạo mã gia đình**. App tạo một mã bí mật và bắt đầu đồng bộ.
 
-**Các máy khác:**
-1. Mở app → **Sao lưu & khôi phục** → nhập mật khẩu → **🔗 Nhập mã gia đình** → gõ mã → **Kết nối**.
-2. Tiến độ của cả 4 người sẽ được tải về và gộp với dữ liệu sẵn có trên máy.
+**Thêm thiết bị khác (cách dễ nhất: gửi link):**
+1. Trên máy đầu tiên: **Sao lưu & khôi phục** → **🔗 Sao chép link kết nối**.
+2. Gửi link đó **riêng** cho người nhà (Zalo, tin nhắn).
+3. Trên máy kia chỉ cần **mở link một lần**: app tự kết nối và tải tiến độ của cả 4 người. Đường link sẽ tự gọn lại, không còn hiện mã trên thanh địa chỉ.
 
-Từ đó về sau mọi thứ tự động. Góc trên trang chủ có biểu tượng ☁️ cho biết tình trạng (✓ đã lưu, … đang lưu, ✕ chưa có mạng).
+**Cách thủ công (nếu không gửi link được):** trên máy kia vào Sao lưu & khôi phục → nhập mật khẩu → **🔗 Nhập mã gia đình** → gõ mã (app hiện mã ngay dưới nút link).
+
+Từ đó về sau mọi thứ tự động. Góc trên trang chủ có biểu tượng ☁️ cho biết tình trạng (✓ đã lưu, … đang lưu, ✕ chưa có mạng). Mỗi máy chỉ cần kết nối **một lần**.
 
 ## Các câu hỏi thường gặp
 
 - **Hai máy cùng chơi một người thì sao?** App gộp lại: giữ số sao, sticker, từ đã thuộc nhiều hơn và số xu cao hơn của hai máy, nên không máy nào làm mất tiến độ của máy kia.
 - **Mất mạng thì sao?** Bé vẫn chơi và lưu bình thường trên máy. Khi có mạng lại, app tự đồng bộ.
-- **Lộ mã gia đình thì sao?** Ai có mã mới đọc/ghi được tiến độ. Dữ liệu chỉ gồm tên Bon/Bi/Bố/Mẹ và điểm số, không có thông tin cá nhân. Nếu lo, bấm **Ngắt kết nối** ở mọi máy rồi tạo mã mới.
+- **Lộ mã hoặc link kết nối thì sao?** Ai có mã hoặc link mới đọc/ghi được tiến độ. Hãy gửi link riêng, đừng đăng công khai. Dữ liệu chỉ gồm tên Bon/Bi/Bố/Mẹ và điểm số, không có thông tin cá nhân. Nếu lo, bấm **Ngắt kết nối** ở mọi máy rồi tạo mã mới.
 - **Có tốn tiền không?** Gói miễn phí của Firebase rộng hơn nhiều so với nhu cầu của một gia đình.
 - **Có thể xem hoặc xóa dữ liệu không?** Có: vào Firebase Console → Firestore Database → Data.

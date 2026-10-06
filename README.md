@@ -18,7 +18,7 @@ Web app học tiếng Anh cơ bản cho trẻ em qua các trò chơi vui nhộn.
 **Hồ sơ gia đình**
 - 4 người chơi cố định: **Bon, Bi, Bố, Mẹ**. Mỗi lần mở app chọn "Ai đang chơi nào?", chạm vào tên là vào chơi. Mỗi người có sao, xu, sticker, nhiệm vụ riêng; chỉ được đổi hình đại diện.
 - **Sao lưu & khôi phục** bằng file, cần mật khẩu người lớn (xem bên dưới).
-- **Đồng bộ tiến độ lên mạng (tùy chọn, Firebase miễn phí):** mỗi lần chơi có mạng, tiến độ tự lưu; mở app trên máy khác, nhập "mã gia đình" một lần là có đủ tiến độ cả 4 người. Hai máy cùng chơi thì tiến độ được gộp, không bên nào bị mất. Xem **HUONG-DAN-DONG-BO.md** để bật.
+- **Đồng bộ tiến độ lên mạng (tùy chọn, Firebase miễn phí):** mỗi lần chơi có mạng, tiến độ tự lưu; mở app trên máy khác, mở "link kết nối" (hoặc nhập mã gia đình) một lần là có đủ tiến độ cả 4 người. Hai máy cùng chơi thì tiến độ được gộp, không bên nào bị mất. Xem **HUONG-DAN-DONG-BO.md** để bật.
 
 **Động lực quay lại mỗi ngày**
 - 🎯 3 nhiệm vụ mỗi ngày, hộp quà và **bộ sưu tập 48 sticker**, sao (tối đa 3 sao mỗi trò), xu 🪙, cấp độ, 11 huy hiệu, chuỗi ngày học, sổ từ vựng.
