@@ -13,6 +13,7 @@
     start(ctx) {
       const words = ctx.topic.id === 'mix' ? K.sample(ctx.words, 12) : ctx.words.slice();
       const seen = new Set();
+      const abc = ctx.topic.id === 'abc';
       let i = 0;
 
       ctx.root.innerHTML = `
@@ -20,6 +21,7 @@
           <button class="flashcard" aria-label="Lật thẻ">
             <span class="fc-inner">
               <span class="fc-face fc-front">
+                <span class="fc-letter"></span>
                 <span class="fc-visual"></span>
                 <span class="fc-word"></span>
                 <span class="fc-hint">👆 Chạm để xem nghĩa</span>
@@ -46,6 +48,7 @@
         seen.add(i);
         card.classList.remove('flipped');
         q('.fc-visual').innerHTML = K.visual(w);
+        q('.fc-letter').textContent = abc ? K.letterOf(w) + ' ' + K.letterOf(w).toLowerCase() : '';
         ctx.root.querySelectorAll('.fc-word').forEach((e) => (e.textContent = w.en));
         q('.fc-vi').textContent = w.vi;
         q('.fc-count').textContent = `${i + 1} / ${words.length}`;
@@ -54,8 +57,13 @@
         card.classList.remove('pop-in');
         void card.offsetWidth;
         card.classList.add('pop-in');
-        K.audio.speak(w.en);
+        say(w);
         if (flip) card.classList.add('flipped');
+      }
+
+      // Với bảng chữ cái: đọc tên chữ rồi đọc từ khoá ("ay... apple")
+      function say(w) {
+        K.audio.speak(abc ? `${K.letterSpeech(K.letterOf(w))}. ${w.en}` : w.en);
       }
 
       function next() {
@@ -77,11 +85,11 @@
       card.addEventListener('click', () => {
         K.audio.sfx('flip');
         card.classList.toggle('flipped');
-        if (card.classList.contains('flipped')) K.audio.speak(words[i].en);
+        if (card.classList.contains('flipped')) say(words[i]);
       });
       q('[data-next]').addEventListener('click', next);
       q('[data-prev]').addEventListener('click', prev);
-      q('[data-speak]').addEventListener('click', () => K.audio.speak(words[i].en));
+      q('[data-speak]').addEventListener('click', () => say(words[i]));
       ctx.listen(document, 'keydown', (e) => {
         if (e.key === 'ArrowRight') next();
         else if (e.key === 'ArrowLeft') prev();
