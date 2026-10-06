@@ -61,7 +61,9 @@
   K.audio = {
     speak(text, opts) {
       const s = K.store.state.settings;
-      if (!synth || !s.speech) return;
+      const done = opts && opts.onend;
+      // Không có giọng đọc: vẫn gọi onend sau một nhịp để chuỗi bài hát không bị đứng
+      if (!synth || !s.speech) { if (done) setTimeout(done, 700); return; }
       try {
         synth.cancel();
         const u = new SpeechSynthesisUtterance(text);
@@ -69,8 +71,9 @@
         if (voice) u.voice = voice;
         u.rate = (opts && opts.rate) || (s.slow ? 0.8 : 1);
         u.pitch = 1.1;
+        if (done) u.onend = () => done();
         synth.speak(u);
-      } catch (e) { /* trình duyệt không hỗ trợ */ }
+      } catch (e) { if (done) setTimeout(done, 700); }
     },
     stop() {
       try { if (synth) synth.cancel(); } catch (e) { /* bỏ qua */ }

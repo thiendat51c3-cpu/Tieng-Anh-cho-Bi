@@ -126,13 +126,57 @@
     },
   ];
 
-  // Chủ đề tổng hợp: gom tất cả từ vựng
+  // Chủ đề "Chào hỏi" (có cụm từ nhiều chữ)
+  K.TOPICS.push({
+    id: 'greetings', en: 'Greetings', vi: 'Chào hỏi', icon: '👋', color: '#0ea5e9', tag: 'Mới!',
+    words: [
+      w('hello', 'xin chào', '👋'), w('welcome', 'chào mừng', '🤗'), w('please', 'làm ơn', '🥺'),
+      w('sorry', 'xin lỗi', '🙇'), w('thank you', 'cảm ơn', '🙏'), w('yes', 'vâng, đúng rồi', '✅'),
+      w('no', 'không', '❌'), w('good morning', 'chào buổi sáng', '🌅'), w('good night', 'chúc ngủ ngon', '🌃'),
+      w('i love you', 'tôi yêu bạn', '🥰'), w('happy birthday', 'chúc mừng sinh nhật', '🎂'),
+    ],
+  });
+
+  // Bảng chữ cái: mỗi chữ một từ khoá (dùng lại từ đã có, bổ sung các chữ còn thiếu)
+  const byEn = {};
+  K.TOPICS.forEach((t) => t.words.forEach((x) => (byEn[x.en] = x)));
+  [
+    w('ice cream', 'cây kem', '🍦'), w('juice', 'nước ép', '🧃'), w('octopus', 'con bạch tuộc', '🐙'),
+    w('umbrella', 'cái ô', '☂️'), w('violin', 'đàn vi-ô-lông', '🎻'), w('xylophone', 'đàn xylophone', '🎶'),
+    w('yo-yo', 'con quay yo-yo', '🪀'), w('zebra', 'ngựa vằn', '🦓'),
+  ].forEach((x) => (byEn[x.en] = x));
+  const ABC = [
+    'apple', 'banana', 'cat', 'dog', 'elephant', 'fish', 'grapes', 'hat', 'ice cream', 'juice', 'kite', 'lion', 'monkey',
+    'nose', 'octopus', 'pizza', 'queen', 'rainbow', 'sun', 'tiger', 'umbrella', 'violin', 'watermelon', 'xylophone', 'yo-yo', 'zebra',
+  ].map((en) => byEn[en]);
+  K.TOPICS.unshift({ id: 'abc', en: 'ABC', vi: 'Bảng chữ cái', icon: '🔤', color: '#6366f1', tag: 'Mới!', words: ABC });
+
+  // Tên đọc của từng chữ cái (để giọng đọc không đọc sai)
+  K.LETTER_NAMES = ['ay', 'bee', 'see', 'dee', 'ee', 'eff', 'gee', 'aitch', 'eye', 'jay', 'kay', 'el', 'em', 'en', 'oh', 'pee', 'cue', 'are', 'ess', 'tee', 'you', 'vee', 'double you', 'ex', 'why', 'zee'];
+  K.letterOf = (x) => ((x.en.match(/[a-z]/i) || ['?'])[0]).toUpperCase();
+  K.letterSpeech = (letter) => K.LETTER_NAMES[letter.charCodeAt(0) - 65] || letter;
+
+  // Chủ đề tổng hợp: gom tất cả từ vựng (không trùng)
   const all = [];
-  K.TOPICS.forEach((t) => t.words.forEach((x) => all.push(x)));
-  K.MIX = { id: 'mix', en: 'Mix', vi: 'Thử thách tổng hợp', icon: '🎲', color: '#7c5cff', words: all };
+  const seen = new Set();
+  K.TOPICS.forEach((t) => t.words.forEach((x) => { if (!seen.has(x.en)) { seen.add(x.en); all.push(x); } }));
+  K.MIX ={ id: 'mix', en: 'Mix', vi: 'Thử thách tổng hợp', icon: '🎲', color: '#7c5cff', words: all };
 
   K.getTopic = (id) => (id === 'mix' ? K.MIX : K.TOPICS.find((t) => t.id === id));
   K.findWord = (en) => all.find((x) => x.en === en);
+
+  // Sticker để sưu tầm (mở bằng hộp quà)
+  const stk = (rarity, list) => list.split(' ').map((e) => ({ id: e, e, rarity }));
+  K.STICKERS = [
+    ...stk('common', '🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🐔 🐧 🐦 🐤 🦆 🦉 🦄 🐝 🦋 🐌 🐞 🐢 🐙 🐠 🐬'),
+    ...stk('rare', '🦖 🦕 🐳 🦈 🦜 🦒 🦔 🐲 🦚 🦢 🦞 🐊'),
+    ...stk('epic', '🌈 🚀 👑 🏆 💎 🛸'),
+  ];
+  K.RARITY = {
+    common: { name: 'Thường', weight: 70, color: '#64748b' },
+    rare: { name: 'Hiếm ⭐', weight: 25, color: '#3b82f6' },
+    epic: { name: 'Siêu hiếm 🌟', weight: 5, color: '#f59e0b' },
+  };
 
   K.PRAISE = ['Great job! 🎉', 'Tuyệt vời!', 'Excellent! ⭐', 'Giỏi quá!', 'Perfect! 🌟', 'Yay! 🥳', 'Đúng rồi!', 'Wow! 👏'];
   K.OOPS = ['Thử lại nhé! 💪', 'Try again!', 'Gần đúng rồi!', 'Cố lên nào!', 'Oops! 🙈'];

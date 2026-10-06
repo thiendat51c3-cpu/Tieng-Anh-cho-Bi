@@ -25,7 +25,7 @@
             .map(
               (c, i) => `
             <button class="mcard" data-i="${i}" aria-label="Thẻ ${i + 1}">
-              <span class="mface back">❓</span>
+              <span class="mface back"><b>?</b></span>
               <span class="mface front ${c.type}">${c.type === 'pic' ? K.visual(c.w) : c.w.en}</span>
             </button>`
             )
