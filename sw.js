@@ -1,8 +1,8 @@
 /* Service worker: ưu tiên mạng, rơi về bộ nhớ đệm khi offline để bé học mọi lúc */
-const CACHE = 'be-vui-hoc-tieng-anh-v3';
+const CACHE = 'be-vui-hoc-tieng-anh-v4';
 const ASSETS = [
   './', 'index.html', 'css/style.css', 'icon.svg', 'manifest.webmanifest',
-  'js/util.js', 'js/data.js', 'js/curriculum.js', 'js/store.js', 'js/audio.js', 'js/fx.js',
+  'js/util.js', 'js/data.js', 'js/curriculum.js', 'js/store.js', 'js/cloud-config.js', 'js/cloud.js', 'js/audio.js', 'js/fx.js',
   'js/games/flashcards.js', 'js/games/choice.js', 'js/games/sentences.js', 'js/games/speak.js', 'js/games/balloon.js',
   'js/games/spell.js', 'js/games/memory.js', 'js/games/truefalse.js', 'js/app.js',
 ];

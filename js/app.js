@@ -126,6 +126,19 @@
     window.scrollTo(0, y);
   }
 
+  /* ---------- Đồng bộ đám mây: hiển thị ---------- */
+  const cloudIcon = () => ({ ok: '☁️✓', syncing: '☁️…', offline: '☁️✕', error: '☁️⚠️', idle: '☁️' }[K.cloud.status()] || '☁️');
+  const cloudPill = () => (K.cloud.linked() ? `<span class="pill cloud" data-cloud title="Đồng bộ đám mây">${cloudIcon()}</span>` : '');
+  function cloudStatusText() {
+    const st = K.cloud.status();
+    if (st === 'syncing') return '⏳ Đang đồng bộ…';
+    if (st === 'offline') return '📴 Chưa có mạng. Sẽ tự đồng bộ khi có mạng.';
+    if (st === 'error') return '⚠️ Chưa đồng bộ được, app sẽ tự thử lại.';
+    const t = K.cloud.lastSync();
+    if (st === 'ok' && t) return '✅ Đã đồng bộ lúc ' + new Date(t).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    return 'Sẵn sàng đồng bộ.';
+  }
+
   /* ---------- Thành phần giao diện ---------- */
   const coinPill = () => `<span class="pill coin" data-coins>🪙 ${K.store.state.coins}</span>`;
   const topicStarsMax = (t) => K.gamesFor(t).length * 3;
@@ -217,6 +230,7 @@
             <span class="pname">${s.name ? K.esc(s.name) : 'Bé yêu'}</span>
           </button>
           <div class="pills">
+            ${cloudPill()}
             <span class="pill streak" title="Số ngày học liên tiếp">🔥 ${s.streak.count}</span>
             ${coinPill()}
           </div>
@@ -231,6 +245,12 @@
           <div class="mascot big" data-act="owl">🦉</div>
           <div class="bubble">Xin chào <b>${who}</b>! Hôm nay mình học gì nào? 🌟</div>
         </div>
+
+        ${K.cloud.enabled() && !K.cloud.linked() && s.stats.games >= 1 ? `<div class="backup-banner cloud-banner">
+          <span class="bb-icon">☁️</span>
+          <div><b>Lưu tiến độ trên mạng nhé!</b><small>Bật đồng bộ để dùng được trên mọi thiết bị.</small></div>
+          <button class="btn" data-act="backup" style="--c:#06b6d4">Bật</button>
+        </div>` : ''}
 
         ${K.store.backupDue() ? `<div class="backup-banner">
           <span class="bb-icon">💾</span>
@@ -705,6 +725,95 @@
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
   }
 
+  function cloudSectionHtml() {
+    if (!K.cloud.enabled()) {
+      return `<hr><div class="cloud-box"><b>☁️ Đồng bộ đám mây</b>
+        <p class="note-ok">Chưa được bật. Xem file <b>HUONG-DAN-DONG-BO.md</b> để bật (cần tạo dự án Firebase miễn phí, khoảng 10 phút).</p></div>`;
+    }
+    if (!K.cloud.linked()) {
+      return `<hr><div class="cloud-box"><b>☁️ Đồng bộ đám mây</b>
+        <p class="note-ok">Lưu tiến độ lên mạng, dùng được trên mọi thiết bị. Mỗi lần chơi có mạng, app tự lưu.</p>
+        <button class="btn" data-cloud-create style="--c:#22c55e">✨ Tạo mã gia đình (máy đầu tiên)</button>
+        <button class="btn" data-cloud-join style="--c:#7c5cff">🔗 Nhập mã gia đình (máy khác)</button>
+        <div class="cloud-join" data-cloud-joinbox hidden>
+          <input class="pw-input code-input" type="text" autocomplete="off" autocapitalize="characters" maxlength="30" placeholder="ABCD-EFGH-JKMN-PQRS-TUVW" data-cloud-code aria-label="Mã gia đình">
+          <button class="btn" data-cloud-go style="--c:#22c55e">Kết nối</button>
+        </div>
+        <div class="cloud-msg" data-cloud-msg aria-live="polite"></div></div>`;
+    }
+    return `<hr><div class="cloud-box"><b>☁️ Đã bật đồng bộ</b>
+      <div class="family-code" data-code>${K.cloud.code()}</div>
+      <small class="muted">Nhập mã này trên thiết bị khác để dùng chung tiến độ. Hãy giữ mã này riêng tư.</small>
+      <div class="cloud-msg" data-cloud-msg aria-live="polite">${cloudStatusText()}</div>
+      <button class="btn" data-cloud-copy style="--c:#06b6d4">📋 Sao chép mã</button>
+      <button class="btn" data-cloud-sync style="--c:#22c55e">🔄 Đồng bộ ngay</button>
+      <button class="btn" data-cloud-unlink style="--c:#ef4444">⛔ Ngắt kết nối thiết bị này</button></div>`;
+  }
+
+  function wireCloud(m) {
+    const q = (s) => m.querySelector(s);
+    const msg = (t, bad) => {
+      const e = q('[data-cloud-msg]');
+      if (e) { e.textContent = t; e.classList.toggle('bad', !!bad); }
+    };
+    const rebuild = () => { m.remove(); showBackup(); };
+    const busy = (btn, on) => { if (btn) btn.disabled = on; };
+
+    const create = q('[data-cloud-create]');
+    if (create) create.addEventListener('click', async () => {
+      busy(create, true);
+      msg('⏳ Đang tạo mã…');
+      try {
+        await K.cloud.createFamily();
+        K.fx.toast('☁️ Đã bật đồng bộ!');
+        rebuild();
+      } catch (e) { busy(create, false); msg('⚠️ ' + e.message, true); }
+    });
+
+    const join = q('[data-cloud-join]');
+    if (join) join.addEventListener('click', () => {
+      q('[data-cloud-joinbox]').hidden = false;
+      q('[data-cloud-code]').focus();
+    });
+    const go = q('[data-cloud-go]');
+    if (go) {
+      const connect = async () => {
+        busy(go, true);
+        msg('⏳ Đang kết nối…');
+        try {
+          await K.cloud.joinFamily(q('[data-cloud-code]').value);
+          K.fx.toast('☁️ Đã kết nối! Tiến độ đã được đồng bộ.');
+          document.querySelectorAll('#modal-root .modal-back').forEach((x) => x.remove());
+          route();
+        } catch (e) { busy(go, false); msg('⚠️ ' + e.message, true); }
+      };
+      go.addEventListener('click', connect);
+      q('[data-cloud-code]').addEventListener('keydown', (e) => { if (e.key === 'Enter') connect(); });
+    }
+
+    const copy = q('[data-cloud-copy]');
+    if (copy) copy.addEventListener('click', async () => {
+      const code = K.cloud.code();
+      try { await navigator.clipboard.writeText(code); K.fx.toast('📋 Đã sao chép mã'); }
+      catch (e) { window.prompt('Sao chép mã gia đình:', code); }
+    });
+    const sync = q('[data-cloud-sync]');
+    if (sync) sync.addEventListener('click', async () => {
+      busy(sync, true);
+      msg('⏳ Đang đồng bộ…');
+      await K.cloud.syncNow();
+      busy(sync, false);
+      msg(cloudStatusText(), K.cloud.status() === 'error');
+    });
+    const unlink = q('[data-cloud-unlink]');
+    if (unlink) unlink.addEventListener('click', () => {
+      if (window.confirm('Ngắt kết nối thiết bị này? Tiến độ trên máy vẫn còn, nhưng sẽ không tự đồng bộ nữa.')) {
+        K.cloud.unlink();
+        rebuild();
+      }
+    });
+  }
+
   function showBackup() {
     const n = K.store.profiles().filter((p) => p.welcomed && K.isFamily(p.name)).length;
     const m = modal(
@@ -715,8 +824,10 @@
        <label class="btn big" style="--c:#7c5cff">⬆️ Khôi phục từ file
          <input type="file" accept=".json,application/json" data-import hidden>
        </label>
+       ${cloudSectionHtml()}
        <button class="btn" data-close style="--c:#64748b">Đóng</button>`
     );
+    wireCloud(m);
     m.querySelector('[data-export-all]').addEventListener('click', () => {
       downloadBackup(K.store.exportData());
       K.fx.toast('Đã tải file sao lưu 💾');
@@ -889,6 +1000,20 @@
   route();
   if (!K.store.state.welcomed) openWelcome();
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { /* bỏ qua */ }
+
+  // Đồng bộ đám mây: tự lưu khi có mạng, tự lấy dữ liệu mới khi mở app
+  K.cloud.onStatus = () => {
+    const pill = document.querySelector('[data-cloud]');
+    if (pill) pill.textContent = cloudIcon();
+    const msg = document.querySelector('[data-cloud-msg]');
+    if (msg && K.cloud.linked()) msg.textContent = cloudStatusText();
+  };
+  K.cloud.onSynced = () => {
+    // Chỉ vẽ lại màn hình tĩnh, không làm gián đoạn trò chơi hay hộp thoại đang mở
+    if (document.querySelector('.modal-back')) return;
+    if (['', '#', '#/', '#/who', '#/rewards', '#/stickers'].includes(location.hash)) route();
+  };
+  K.cloud.start();
 
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

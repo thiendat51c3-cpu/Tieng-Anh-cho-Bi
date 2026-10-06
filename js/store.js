@@ -90,6 +90,35 @@
     return d;
   }
 
+  /* ----- Gộp tiến độ của cùng một hồ sơ từ hai thiết bị (không làm mất tiến độ nào) ----- */
+  function mergeData(a, b) {
+    const out = clone(a);
+    const maxObj = (x, y) => {
+      const r = { ...x };
+      keysOf(y).forEach((k) => { r[k] = Math.max(r[k] || 0, y[k] || 0); });
+      return r;
+    };
+    const union = (x, y) => ({ ...x, ...y });
+    out.coins = Math.max(a.coins, b.coins);
+    out.stats = { games: Math.max(a.stats.games, b.stats.games), perfect: Math.max(a.stats.perfect, b.stats.perfect) };
+    out.best = maxObj(a.best, b.best);
+    out.mastered = maxObj(a.mastered, b.mastered);
+    out.stickers = maxObj(a.stickers, b.stickers);
+    out.learned = union(a.learned, b.learned);
+    out.topicsPlayed = union(a.topicsPlayed, b.topicsPlayed);
+    out.gamesPlayed = union(a.gamesPlayed, b.gamesPlayed);
+    out.badges = union(a.badges, b.badges);
+    out.gifts = Math.max(a.gifts, b.gifts);
+    out.lastLevel = Math.max(a.lastLevel, b.lastLevel);
+    out.streak = a.streak.last > b.streak.last ? a.streak : b.streak.last > a.streak.last ? b.streak : { count: Math.max(a.streak.count, b.streak.count), last: a.streak.last };
+    if (a.daily.date !== b.daily.date) out.daily = clone(a.daily.date > b.daily.date ? a.daily : b.daily);
+    else {
+      out.daily = { date: a.daily.date, games: Math.max(a.daily.games, b.daily.games), correct: Math.max(a.daily.correct, b.daily.correct), learn: Math.max(a.daily.learn, b.daily.learn), claimed: union(a.daily.claimed, b.daily.claimed), chest: a.daily.chest || b.daily.chest };
+    }
+    out.welcomed = true;
+    return out;
+  }
+
   /* ----- Hộp lưu: nhiều hồ sơ ----- */
   let idSeq = 0;
   const newId = () => 'p' + Date.now().toString(36) + (idSeq++).toString(36);
@@ -97,12 +126,26 @@
   // Hồ sơ "trống": chưa chơi gì (dùng để thay thế bằng hồ sơ gia đình hoặc ghi đè khi khôi phục)
   const isBlank = (d) => !d.welcomed || (d.stats.games === 0 && d.coins === 0 && !Object.keys(d.stickers).length && !Object.keys(d.learned).length);
 
+  /* ----- Đồng bộ đám mây: trạng thái lưu cùng hộp lưu ----- */
+  const CODE_RE = /^[a-hj-km-np-z2-9]{20}$/;
+  function normCloud(c) {
+    const out = { code: '', base: {}, snap: {}, last: 0 };
+    if (!c || typeof c !== 'object') return out;
+    if (typeof c.code === 'string' && CODE_RE.test(c.code)) out.code = c.code;
+    keysOf(c.base).forEach((k) => { if (/^[a-z0-9]{1,20}$/.test(k)) out.base[k] = num(c.base[k], 1e15); });
+    keysOf(c.snap).forEach((k) => { if (/^[a-z0-9]{1,20}$/.test(k) && typeof c.snap[k] === 'string' && c.snap[k].length < 60000) out.snap[k] = c.snap[k]; });
+    out.last = num(c.last, 1e15);
+    return out;
+  }
+  // Khóa ổn định của hồ sơ giữa các thiết bị (từ tên): Bon -> bon, Bố -> bo, Mẹ -> me
+  const profileKey = (name) => String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/gi, 'd').toLowerCase().replace(/[^a-z0-9]/g, '');
+
   function readBoxRaw() {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const o = JSON.parse(raw);
-        const box = { active: '', order: [], list: {}, meta: { lastBackup: num(o.meta && o.meta.lastBackup, 1e15), familySeeded: !!(o.meta && o.meta.familySeeded) } };
+        const box = { active: '', order: [], list: {}, meta: { lastBackup: num(o.meta && o.meta.lastBackup, 1e15), familySeeded: !!(o.meta && o.meta.familySeeded), cloud: normCloud(o.meta && o.meta.cloud) } };
         (Array.isArray(o.order) ? o.order : keysOf(o.list)).slice(0, MAX_PROFILES).forEach((id) => {
           const d = sanitize(o.list && o.list[id]);
           if (d && typeof id === 'string' && /^[a-z0-9]+$/.test(id)) { box.order.push(id); box.list[id] = d; }
@@ -119,7 +162,7 @@
       const old = localStorage.getItem(LEGACY_KEY); // chuyển dữ liệu bản cũ sang hồ sơ đầu tiên
       if (old) first = sanitize(JSON.parse(old)) || first;
     } catch (e) { /* bỏ qua */ }
-    return { active: id, order: [id], list: { [id]: first }, meta: { lastBackup: 0, familySeeded: false } };
+    return { active: id, order: [id], list: { [id]: first }, meta: { lastBackup: 0, familySeeded: false, cloud: normCloud() } };
   }
 
   // Lần đầu trên thiết bị: tạo sẵn các hồ sơ gia đình (giữ lại hồ sơ đã có dữ liệu, thay hồ sơ trống)
@@ -169,6 +212,11 @@
     COINS_PER_LEVEL,
 
     save() {
+      this.persist();
+      if (typeof this.onChange === 'function') this.onChange();
+    },
+
+    persist() {
       box.list[box.active] = state;
       try {
         localStorage.setItem(KEY, JSON.stringify({ v: 2, active: box.active, order: box.order, meta: box.meta, list: box.list }));
@@ -234,6 +282,28 @@
       delete box.list[id];
       box.order = box.order.filter((x) => x !== id);
       this.save();
+      return true;
+    },
+
+    /* ----- API cho đồng bộ đám mây (js/cloud.js) ----- */
+    profileKey,
+    cloudMeta() { return box.meta.cloud; },
+    // Các hồ sơ của 4 người chơi cố định: { id, key, data }
+    familyProfiles() {
+      return box.order
+        .filter((id) => dataOf(id).welcomed && K.isFamily(dataOf(id).name))
+        .map((id) => ({ id, key: profileKey(dataOf(id).name), data: dataOf(id) }));
+    },
+    // Ghi đè hồ sơ bằng dữ liệu từ đám mây (đã làm sạch), không đánh dấu là thay đổi mới
+    applyRemote(id, raw, merge) {
+      const incoming = sanitize(raw);
+      if (!incoming || !box.list[id]) return false;
+      incoming.welcomed = true;
+      const cur = dataOf(id);
+      const next = merge ? mergeData(cur, incoming) : incoming;
+      next.name = cur.name; // tên và hình do thiết bị này giữ
+      if (id === box.active) setState(next); else box.list[id] = next;
+      this.persist();
       return true;
     },
 
