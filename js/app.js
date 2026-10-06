@@ -742,9 +742,12 @@
         <div class="cloud-msg" data-cloud-msg aria-live="polite"></div></div>`;
     }
     return `<hr><div class="cloud-box"><b>☁️ Đã bật đồng bộ</b>
-      <div class="family-code" data-code>${K.cloud.code()}</div>
-      <small class="muted">Nhập mã này trên thiết bị khác để dùng chung tiến độ. Hãy giữ mã này riêng tư.</small>
       <div class="cloud-msg" data-cloud-msg aria-live="polite">${cloudStatusText()}</div>
+      <p class="note-ok">Muốn thêm thiết bị khác? Sao chép <b>link kết nối</b>, gửi riêng cho người nhà (Zalo, tin nhắn). Mở link trên máy đó <b>một lần</b> là tự kết nối.</p>
+      <button class="btn big" data-cloud-link style="--c:#22c55e">🔗 Sao chép link kết nối</button>
+      <small class="muted">Hoặc nhập mã thủ công:</small>
+      <div class="family-code" data-code>${K.cloud.code()}</div>
+      <small class="muted">Hãy giữ link và mã này riêng tư, đừng đăng lên mạng.</small>
       <button class="btn" data-cloud-copy style="--c:#06b6d4">📋 Sao chép mã</button>
       <button class="btn" data-cloud-sync style="--c:#22c55e">🔄 Đồng bộ ngay</button>
       <button class="btn" data-cloud-unlink style="--c:#ef4444">⛔ Ngắt kết nối thiết bị này</button></div>`;
@@ -791,6 +794,12 @@
       q('[data-cloud-code]').addEventListener('keydown', (e) => { if (e.key === 'Enter') connect(); });
     }
 
+    const linkBtn = q('[data-cloud-link]');
+    if (linkBtn) linkBtn.addEventListener('click', async () => {
+      const link = K.cloud.joinLink();
+      try { await navigator.clipboard.writeText(link); K.fx.toast('🔗 Đã sao chép link kết nối'); }
+      catch (e) { window.prompt('Sao chép link kết nối:', link); }
+    });
     const copy = q('[data-cloud-copy]');
     if (copy) copy.addEventListener('click', async () => {
       const code = K.cloud.code();
@@ -920,6 +929,13 @@
     if (parts[0] === 'play' && K.getTopic(parts[1]) && K.games[parts[2]]) {
       return renderPlay(K.getTopic(parts[1]), K.games[parts[2]]);
     }
+    if (parts[0] === 'join') {
+      // Link kết nối gia đình: lấy mã rồi xóa ngay khỏi thanh địa chỉ để mã không bị lộ khi chụp màn hình hay chia sẻ lại
+      const code = parts[1] || '';
+      history.replaceState(null, '', location.href.split('#')[0] + '#/who');
+      if (/^[A-Za-z0-9-]{20,40}$/.test(code)) handleJoin(code);
+      return renderWho();
+    }
     if (parts[0] === 'who') return renderWho();
     if (parts[0] === 'rewards') return renderRewards();
     if (parts[0] === 'stickers') return renderStickers();
@@ -992,9 +1008,36 @@
 
   window.addEventListener('hashchange', route);
 
+  /* ---------- Link kết nối gia đình: #/join/<mã> ---------- */
+  async function handleJoin(raw) {
+    if (!K.cloud.enabled()) { K.fx.toast('Đồng bộ chưa được bật trên app này.'); return; }
+    const code = K.cloud.normalizeCode(raw);
+    if (K.cloud.linked() && K.cloud.rawCode() === code) { K.fx.toast('☁️ Thiết bị này đã được kết nối rồi'); return; }
+    if (K.cloud.linked() && !window.confirm('Thiết bị này đang dùng một mã gia đình khác. Chuyển sang gia đình trong link này?')) return;
+    const m = modal(
+      `<div class="mascot big">🦉</div><h2>Đang kết nối…</h2>
+       <p class="note-ok">Cú Mèo đang lấy tiến độ của cả nhà. Chờ một chút nhé!</p>`,
+      false
+    );
+    m.dataset.keep = '1';
+    try {
+      await K.cloud.joinFamily(code);
+      m.remove();
+      K.audio.sfx('win');
+      K.fx.toast('☁️ Đã kết nối! Tiến độ cả nhà đã được đồng bộ.');
+      route();
+    } catch (e) {
+      m.querySelector('.modal').innerHTML = `<h2>⚠️ Chưa kết nối được</h2>
+        <p class="note-ok">${K.esc(e.message)}</p>
+        <button class="btn big" data-retry style="--c:#22c55e">🔄 Thử lại</button>
+        <button class="btn" data-close style="--c:#64748b">Đóng</button>`;
+      m.querySelector('[data-retry]').addEventListener('click', () => { m.remove(); handleJoin(raw); });
+    }
+  }
+
   K.store.touchDay();
   // Nhiều hồ sơ: hỏi "Ai đang chơi?" mỗi lần mở app
-  if (K.store.profiles().filter((p) => p.welcomed && K.isFamily(p.name)).length > 1 && !isPicked()) {
+  if (K.store.profiles().filter((p) => p.welcomed && K.isFamily(p.name)).length > 1 && !isPicked() && !location.hash.startsWith('#/join/')) {
     history.replaceState(null, '', '#/who');
   }
   route();
