@@ -622,3 +622,97 @@ label.btn { cursor: pointer; }
 .avatar, .avatar-opt { overflow: hidden; display: grid; place-items: center; }
 .avatars { gap: 8px; }
 .avatar-opt { width: 52px; height: 52px; }
+
+/* Ô nhập mật khẩu */
+.pw-input { width: 100%; max-width: 280px; padding: 12px 16px; border: 3px solid #d9d0f5; border-radius: 16px; font: inherit; font-weight: 800; font-size: 1.5rem; text-align: center; letter-spacing: 0.3em; color: var(--ink); }
+.pw-error { min-height: 1.4em; color: var(--bad); font-weight: 800; }
+
+/* =====================================================
+   Chương trình Tiếng Anh 4: tab, unit, mẫu câu, trò về câu
+   ===================================================== */
+
+/* ----- Từ không có hình: hiện nghĩa tiếng Việt ----- */
+.vi-card {
+  display: inline-block; font-size: max(0.28em, 0.8rem); font-weight: 800; line-height: 1.15; text-align: center;
+  max-width: 9em; color: var(--ink); word-break: break-word;
+}
+.fc-visual:empty { display: none; }
+.q-visual .vi-card, .tf-visual .vi-card, .sp-visual .vi-card { font-size: max(0.3em, 1.5rem); color: var(--gc, var(--ink)); }
+.chip .vi-card { font-size: 0.8rem; max-width: 6em; }
+.opt.pic .vi-card { font-size: max(0.24em, 1rem); padding: 0 4px; }
+.b-body .vi-card { font-size: 0.68rem; line-height: 1.1; max-width: 100%; padding: 0 4px; }
+.mface.front.pic .vi-card { font-size: clamp(0.8rem, 3.6vw, 1.1rem); }
+
+/* ----- Tab chọn sách ----- */
+.book-tabs { display: flex; gap: 8px; margin: 18px 0 4px; padding: 5px; background: rgba(255, 255, 255, 0.75); border-radius: 20px; }
+.book-tabs button { flex: 1; min-height: 50px; padding: 4px 8px; border: 0; border-radius: 16px; background: transparent; font-weight: 800; font-size: 1.05rem; color: var(--ink-soft); transition: background 0.15s; }
+.book-tabs button.on { background: var(--primary); color: #fff; box-shadow: 0 4px 0 rgba(60, 20, 140, 0.35); }
+
+/* ----- Thẻ unit ----- */
+.t-unit {
+  position: absolute; top: 8px; left: 8px; padding: 1px 10px; border-radius: 99px; background: rgba(255, 255, 255, 0.92); color: var(--tc);
+  font-size: 0.78rem; font-weight: 800; text-shadow: none; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+}
+.tcard.review { background: repeating-linear-gradient(135deg, var(--tc) 0 14px, color-mix(in srgb, var(--tc) 82%, #fff) 14px 28px); border: 3px dashed rgba(255, 255, 255, 0.85); }
+
+/* ----- Thẻ từ có nghĩa ----- */
+.chip-text { display: grid; line-height: 1.1; text-align: left; }
+.chip-text b { font-size: 1rem; }
+.chip-text small { color: var(--ink-soft); font-weight: 700; font-size: 0.78rem; }
+
+/* ----- Mẫu câu cần nhớ ----- */
+.struct-list { display: grid; gap: 10px; }
+.struct {
+  position: relative; display: grid; gap: 2px; text-align: left; padding: 12px 52px 12px 16px; background: #fff;
+  border: 3px solid color-mix(in srgb, var(--tc) 40%, #fff); border-left: 10px solid var(--tc); border-radius: 18px; box-shadow: 0 4px 0 rgba(45, 34, 80, 0.1);
+}
+.struct:active { transform: translateY(3px); box-shadow: none; }
+.st-q { font-weight: 800; font-size: 1.1rem; color: var(--ink); }
+.st-a { font-weight: 700; color: var(--tc); }
+.st-sp { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; }
+
+/* ----- Danh sách câu mẫu ----- */
+.sent-list { margin-top: 18px; background: rgba(255, 255, 255, 0.85); border-radius: 20px; padding: 6px 12px 10px; }
+.sent-list summary { cursor: pointer; padding: 10px 4px; font-weight: 800; font-size: 1.1rem; }
+.sent-row { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 8px 4px; background: none; border: 0; border-top: 2px dashed #eee7ff; }
+.sent-row span:first-child { font-size: 1.3rem; flex: none; }
+.sent-row b { display: block; line-height: 1.2; }
+.sent-row small { color: var(--ink-soft); font-weight: 600; }
+
+/* ----- Trò Hiểu câu ----- */
+.sent-card { gap: 10px; }
+.sent-en { font-size: clamp(1.4rem, 6vw, 2rem); font-weight: 800; text-align: center; line-height: 1.2; color: var(--ink); }
+.sent-vi { font-size: clamp(1.2rem, 5vw, 1.6rem); font-weight: 800; text-align: center; line-height: 1.25; color: var(--gc); }
+.big-speak.small { width: 84px; height: 84px; font-size: 2.4rem; }
+.opts.sents { grid-template-columns: 1fr; max-width: 560px; gap: 10px; }
+.opt.sent { min-height: 64px; padding: 10px 16px; font-size: clamp(1rem, 4.4vw, 1.25rem); text-align: left; line-height: 1.25; }
+
+/* ----- Trò Sắp xếp câu ----- */
+.ans-line {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; min-height: 76px; padding: 12px;
+  margin: 4px auto 12px; max-width: 600px; background: rgba(255, 255, 255, 0.8); border: 3px dashed #b9a9f0; border-radius: 22px;
+}
+.ans-line.ok { background: #c9f7d8; border: 3px solid var(--good); animation: tada 0.6s; }
+.ans-line.shake { animation: shake 0.4s; border-color: var(--bad); background: #ffd6d6; }
+.ans-hint { color: var(--ink-soft); font-weight: 700; }
+.tok-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 600px; margin: 0 auto; }
+.tok {
+  min-height: 52px; padding: 6px 16px; border: 0; border-radius: 16px; background: var(--gc); color: #fff;
+  font-weight: 800; font-size: clamp(1.05rem, 4.6vw, 1.35rem); box-shadow: 0 5px 0 rgba(0, 0, 0, 0.25); transition: transform 0.08s;
+}
+.tok:active:not(.used) { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25); }
+.tok.used { visibility: hidden; }
+.tok.placed { background: #fff; color: var(--ink); border: 3px solid var(--gc); box-shadow: 0 4px 0 rgba(45, 34, 80, 0.14); }
+.tok.placed.locked { background: #fff3c4; border-color: #f59e0b; }
+
+@media (max-width: 420px) {
+  .book-tabs button { font-size: 0.95rem; }
+  .struct { padding-right: 46px; }
+}
+.book-tabs button { white-space: nowrap; font-size: clamp(0.85rem, 3.8vw, 1.05rem); padding: 4px 4px; }
+.tcard.review .t-unit { top: 12px; left: 12px; }
+
+/* Khung hình khi chỉ có nghĩa tiếng Việt: thu gọn cho vừa chữ */
+.q-visual:has(.vi-card), .tf-visual:has(.vi-card), .sp-visual:has(.vi-card), .fc-visual:has(.vi-card) { font-size: 2.1rem; line-height: 1.2; padding: 22px 12px; }
+.q-visual:has(.vi-card) .vi-card, .tf-visual:has(.vi-card) .vi-card, .sp-visual:has(.vi-card) .vi-card { font-size: 1em; max-width: 10em; }
+.fc-visual:has(.vi-card) .vi-card { font-size: 1em; }

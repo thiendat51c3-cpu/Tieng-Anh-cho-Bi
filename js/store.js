@@ -263,7 +263,7 @@
       const touched = [];
       items.slice(0, MAX_PROFILES).forEach((raw) => {
         const s = sanitize(raw);
-        if (!s) { res.skipped++; return; }
+        if (!s || (K.FAMILY && !K.isFamily(s.name))) { res.skipped++; return; } // chỉ nhận hồ sơ của 4 người chơi cố định
         s.welcomed = true;
         const same = s.name && box.order.find((id) => dataOf(id).welcomed && dataOf(id).name.toLowerCase() === s.name.toLowerCase());
         if (same && (isBlank(dataOf(same)) || !ask || ask(s.name))) {
@@ -311,7 +311,7 @@
     levelProgress() { return (state.coins % COINS_PER_LEVEL) / COINS_PER_LEVEL; },
 
     bestStars(topic, game) { return state.best[`${topic}/${game}`] || 0; },
-    topicStars(topic) { return K.gameOrder.reduce((n, g) => n + this.bestStars(topic, g), 0); },
+    topicStars(topic) { return (K.getTopic(topic) ? K.gamesFor(K.getTopic(topic)) : K.gameOrder).reduce((n, g) => n + this.bestStars(topic, g), 0); },
     totalStars() {
       return Object.values(state.best).reduce((n, v) => n + v, 0);
     },
