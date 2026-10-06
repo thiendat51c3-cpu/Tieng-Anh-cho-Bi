@@ -47,7 +47,7 @@
         const w = words[i];
         seen.add(i);
         card.classList.remove('flipped');
-        q('.fc-visual').innerHTML = K.visual(w);
+        q('.fc-visual').innerHTML = K.hasPicture(w) ? K.visual(w) : '';
         q('.fc-letter').textContent = abc ? K.letterOf(w) + ' ' + K.letterOf(w).toLowerCase() : '';
         ctx.root.querySelectorAll('.fc-word').forEach((e) => (e.textContent = w.en));
         q('.fc-vi').textContent = w.vi;

@@ -6,13 +6,14 @@
   K.registerGame({
     id: 'spell', name: 'Xếp chữ', icon: '🔤', color: '#8b5cf6',
     desc: 'Ghép các chữ cái thành từ',
+    available: (t) => t.words.filter((w) => /^[A-Za-z]+$/.test(w.en)).length >= 3,
 
     start(ctx) {
-      const words = K.sample(ctx.words.filter((w) => /^[a-z]+$/.test(w.en)), Math.min(ROUNDS, ctx.words.length));
+      const words = K.sample(ctx.words.filter((w) => /^[A-Za-z]+$/.test(w.en)), ROUNDS);
       const root = ctx.root;
       let idx = 0;
       let correct = 0;
-      let word, tiles, slots, locked, hints, mistakes, done;
+      let word, target, tiles, slots, locked, hints, mistakes, done;
 
       function scramble(letters) {
         let t;
@@ -29,8 +30,9 @@
           return;
         }
         word = words[idx];
-        tiles = scramble(word.en.split(''));
-        slots = new Array(word.en.length).fill(null);
+        target = word.en.toLowerCase();
+        tiles = scramble(target.split(''));
+        slots = new Array(target.length).fill(null);
         locked = 0;
         hints = 0;
         mistakes = 0;
@@ -41,7 +43,7 @@
         root.innerHTML = `
           <div class="sp-card">
             <button class="sp-visual" data-speak aria-label="Nghe phát âm">${K.visual(word)}</button>
-            <div class="sp-vi">${word.vi}</div>
+            ${K.hasPicture(word) ? `<div class="sp-vi">${word.vi}</div>` : ''}
           </div>
           <div class="slots"></div>
           <div class="tiles"></div>
@@ -100,13 +102,13 @@
       }
 
       function hint() {
-        if (done || locked >= word.en.length - 1) return;
+        if (done || locked >= target.length - 1) return;
         locked++;
         hints++;
         const used = new Set();
-        slots = new Array(word.en.length).fill(null);
+        slots = new Array(target.length).fill(null);
         for (let i = 0; i < locked; i++) {
-          const t = tiles.find((x) => x.ch === word.en[i] && !used.has(x.id));
+          const t = tiles.find((x) => x.ch === target[i] && !used.has(x.id));
           slots[i] = t.id;
           used.add(t.id);
         }
@@ -131,7 +133,7 @@
 
       function check() {
         const attempt = slots.map((id) => tiles.find((t) => t.id === id).ch).join('');
-        if (attempt === word.en) {
+        if (attempt === target) {
           done = true;
           render('ok');
           K.audio.sfx('correct');

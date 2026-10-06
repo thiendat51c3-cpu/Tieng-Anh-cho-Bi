@@ -4,27 +4,27 @@ Web app học tiếng Anh cơ bản cho trẻ em qua các trò chơi vui nhộn.
 
 ## Tính năng
 
-- **15 chủ đề** (~160 từ): Bảng chữ cái ABC, Động vật, Màu sắc, Con số, Trái cây, Gia đình & Nghề nghiệp, Cơ thể, Đồ ăn, Trường học, Phương tiện, Thiên nhiên, Quần áo, Đồ chơi, Cảm xúc, Chào hỏi, cùng chế độ **Thử thách tổng hợp**.
-- **9 chế độ học/chơi**:
-  - 📖 Học từ mới: thẻ lật, nghe phát âm, xem nghĩa tiếng Việt (chủ đề ABC hiện chữ cái và đọc tên chữ)
-  - 🖼️ Đoán hình: nhìn hình, chọn từ đúng
-  - 👂 Nghe & chọn: nghe từ, chọn hình đúng
-  - 🔡 Chữ cái đầu: từ này bắt đầu bằng chữ gì (làm quen phonics)
-  - 🎤 Nói tiếng Anh: nghe mẫu rồi nói theo, app nhận diện giọng nói (tự chuyển sang chế độ luyện tập nếu micro không dùng được)
-  - 🎈 Bắn bóng bay: chạm vào bóng bay có hình đúng
-  - 🔤 Xếp chữ: ghép chữ cái thành từ (chạm hoặc gõ bàn phím, có gợi ý)
-  - 🃏 Lật hình: tìm cặp hình – từ giống nhau
-  - ⚡ Đúng hay sai?: 30 giây, càng nhanh càng tốt
-- 🎵 **Bài hát ABC**: nghe và nhìn từng chữ cái sáng lên theo giọng hát.
-- **Động lực quay lại mỗi ngày**:
-  - 🎯 3 nhiệm vụ mỗi ngày, hoàn thành cả 3 nhận hộp quà bí mật
-  - 🎁 Hộp quà & **bộ sưu tập 48 sticker** (thường, hiếm, siêu hiếm); mở bằng xu hoặc quà miễn phí khi lên cấp
-  - Sao (tối đa 3 sao mỗi trò), xu 🪙, cấp độ, 11 huy hiệu, chuỗi ngày học, sổ từ vựng
-- **Nhiều hồ sơ trên một thiết bị**: mỗi bé một hồ sơ riêng (tên, hình đại diện, sao, sticker, nhiệm vụ). Mở app là chọn "Ai đang chơi nào?".
-- **Sao lưu & khôi phục**: tải file sao lưu để giữ tiến trình khi đổi máy hoặc bị xóa dữ liệu trình duyệt; khôi phục từ file có kiểm tra và làm sạch dữ liệu. App nhắc sao lưu sau khi bé chơi nhiều.
-- **Hình đại diện tự vẽ**: capybara đội quýt, kỳ nhông axolotl, quái vật nhỏ, gấu trúc đỏ, cùng các emoji dễ thương.
-- Phát âm bằng giọng đọc của trình duyệt (Web Speech API), có chế độ đọc chậm. Âm thanh hiệu ứng tạo bằng Web Audio, không cần file.
+**Bám sát sách *Tiếng Anh 4 – Global Success* (Kết nối tri thức với cuộc sống)**
+- Tập 1 và Tập 2: **Starter + 20 unit** + 4 bài **Ôn tập** (Review 1–4) + **Thử thách tổng hợp** (~200 từ, ~210 câu mẫu).
+- Mỗi unit gồm: từ vựng theo Wordlist của sách (có nghĩa tiếng Việt), **mẫu câu cần nhớ** theo Book map, **câu mẫu** có bản dịch, và phần **âm cần nhớ / trọng âm**.
+- Từ có hình minh hoạ dễ hiểu thì hiện emoji; từ trừu tượng (because, behind, tháng, quốc gia...) hiện **nghĩa tiếng Việt** thay cho hình.
+- Chủ đề **Mở rộng** (động vật, màu sắc, trái cây, bảng chữ cái ABC có bài hát...) để chơi thêm.
+
+**10 trò chơi + học từ**
+- 📖 Học từ mới (thẻ lật) · 🖼️ Đoán hình · 👂 Nghe & chọn · 🔡 Chữ cái đầu
+- 💬 **Hiểu câu** (nghe câu, chọn nghĩa) · 🧩 **Sắp xếp câu** (xếp các từ thành câu đúng)
+- 🎤 Nói tiếng Anh (nhận diện giọng nói) · 🎈 Bắn bóng bay · 🔤 Xếp chữ · 🃏 Lật hình · ⚡ Đúng hay sai?
+
+**Hồ sơ gia đình**
+- 4 người chơi cố định: **Bon, Bi, Bố, Mẹ**. Mỗi lần mở app chọn "Ai đang chơi nào?", chạm vào tên là vào chơi. Mỗi người có sao, xu, sticker, nhiệm vụ riêng; chỉ được đổi hình đại diện.
+- **Sao lưu & khôi phục** bằng file, cần mật khẩu người lớn (xem bên dưới).
+
+**Động lực quay lại mỗi ngày**
+- 🎯 3 nhiệm vụ mỗi ngày, hộp quà và **bộ sưu tập 48 sticker**, sao (tối đa 3 sao mỗi trò), xu 🪙, cấp độ, 11 huy hiệu, chuỗi ngày học, sổ từ vựng.
+- Phát âm bằng giọng đọc của trình duyệt (Web Speech API), có chế độ đọc chậm. Âm thanh hiệu ứng tạo bằng Web Audio.
 - Lưu tiến trình trên máy (localStorage), dùng offline được (PWA), hỗ trợ điện thoại và máy tính bảng.
+
+**Về nội dung:** app chỉ dùng danh sách từ vựng và mẫu câu trong Book map / Wordlist của sách. Câu ví dụ, bản dịch và hình minh hoạ do app tự soạn; app không chép nội dung bài học, hình ảnh hay âm thanh của sách. Phụ huynh nên đối chiếu với bài học trên lớp của bé.
 
 ## Chạy thử
 
@@ -40,20 +40,24 @@ python3 -m http.server 8000
 Settings → Pages → Source: *Deploy from a branch* → chọn nhánh và thư mục `/ (root)`.
 Link sẽ có dạng `https://<tên-người-dùng>.github.io/tieng-anh-tre-em/`.
 
-## Thêm từ vựng
+## Thêm hoặc sửa nội dung
 
-Sửa `js/data.js`. Mỗi từ có dạng `w('cat', 'con mèo', '🐱')` (tiếng Anh, tiếng Việt, emoji). Tên tiếng Anh của mỗi từ phải là duy nhất trong toàn bộ dữ liệu.
+- **Chương trình lớp 4:** sửa `js/curriculum.js`. Mỗi từ có dạng `W('hello', 'xin chào', '👋')` (để trống emoji nếu muốn hiện nghĩa tiếng Việt thay hình); mỗi unit có `structures` (mẫu câu), `sentences` (câu mẫu `[tiếng Anh, tiếng Việt]`) và `phonics`.
+- **Chủ đề mở rộng:** sửa `js/data.js`.
+- **Danh sách người chơi:** `K.FAMILY` trong `js/data.js`.
+- **Mật khẩu sao lưu:** app chỉ lưu mã băm trong `js/data.js` (`K.checkPassword`). Vì là web tĩnh nên mật khẩu chỉ để ngăn trẻ nhỏ bấm nhầm, không phải bảo mật thật sự.
 
 ## Cấu trúc
 
 ```
 index.html          Trang chính
 css/style.css       Giao diện
-js/data.js          Từ vựng, chủ đề, sticker, hình đại diện
+js/curriculum.js    Chương trình Tiếng Anh 4 (từ vựng, mẫu câu, câu mẫu từng unit)
+js/data.js          Chủ đề mở rộng, sticker, hình đại diện, hồ sơ gia đình
 js/store.js         Hồ sơ người chơi, lưu tiến trình, sao lưu, huy hiệu
 js/audio.js         Phát âm và âm thanh hiệu ứng
 js/fx.js            Pháo giấy, hiệu ứng
-js/games/*.js       Các trò chơi (học từ, chọn đáp án, nói, bóng bay, xếp chữ, lật hình, đúng/sai)
+js/games/*.js       Các trò chơi (học từ, chọn đáp án, câu, nói, bóng bay, xếp chữ, lật hình, đúng/sai)
 js/app.js           Định tuyến, màn hình, kết quả
 sw.js               Service worker (offline)
 ```

@@ -156,14 +156,9 @@
   K.letterOf = (x) => ((x.en.match(/[a-z]/i) || ['?'])[0]).toUpperCase();
   K.letterSpeech = (letter) => K.LETTER_NAMES[letter.charCodeAt(0) - 65] || letter;
 
-  // Chủ đề tổng hợp: gom tất cả từ vựng (không trùng)
-  const all = [];
-  const seen = new Set();
-  K.TOPICS.forEach((t) => t.words.forEach((x) => { if (!seen.has(x.en)) { seen.add(x.en); all.push(x); } }));
-  K.MIX ={ id: 'mix', en: 'Mix', vi: 'Thử thách tổng hợp', icon: '🎲', color: '#7c5cff', words: all };
-
-  K.getTopic = (id) => (id === 'mix' ? K.MIX : K.TOPICS.find((t) => t.id === id));
-  K.findWord = (en) => all.find((x) => x.en === en);
+  // Các chủ đề từ vựng vui mở rộng (ngoài chương trình). Chương trình lớp 4 nằm ở js/curriculum.js
+  K.EXTRA_TOPICS = K.TOPICS.slice();
+  K.EXTRA_TOPICS.forEach((t) => { t.group = 'extra'; delete t.tag; });
 
   // Sticker để sưu tầm (mở bằng hộp quà)
   const stk = (rarity, list) => list.split(' ').map((e) => ({ id: e, e, rarity }));
@@ -230,6 +225,31 @@
   };
   K.AVATARS = ['capy', 'axolotl', 'monster', 'redpanda', '🦊', '🐼', '🐯', '🐸', '🐵', '🦄', '🐰', '🐻'];
   K.avatarHtml = (a) => K.AVATAR_SVG[a] || K.esc(a);
+
+  // Gia đình: các hồ sơ được tạo sẵn ở lần mở app đầu tiên trên mỗi thiết bị (sửa tên/hình ở đây nếu cần)
+  K.FAMILY = [
+    { name: 'Bon', avatar: 'capy' },
+    { name: 'Bi', avatar: 'axolotl' },
+    { name: 'Bố', avatar: '🐻' },
+    { name: 'Mẹ', avatar: '🦄' },
+  ];
+  K.isFamily = (name) => K.FAMILY.some((f) => f.name.toLowerCase() === String(name || '').trim().toLowerCase());
+
+  // Mật khẩu khu vực người lớn (sao lưu/khôi phục). Chỉ lưu mã băm, không lưu mật khẩu dạng chữ.
+  // Lưu ý: đây là web tĩnh nên chỉ để ngăn trẻ nhỏ bấm nhầm, không phải bảo mật thật sự.
+  const cyrb53 = (str) => {
+    let h1 = 0xdeadbeef;
+    let h2 = 0x41c6ce57;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (h2 >>> 0).toString(16) + (h1 >>> 0).toString(16);
+  };
+  K.checkPassword = (input) => cyrb53('be-vui:' + String(input).trim()) === '58de42cfc49d9df3';
 
   K.PRAISE = ['Great job! 🎉', 'Tuyệt vời!', 'Excellent! ⭐', 'Giỏi quá!', 'Perfect! 🌟', 'Yay! 🥳', 'Đúng rồi!', 'Wow! 👏'];
   K.OOPS = ['Thử lại nhé! 💪', 'Try again!', 'Gần đúng rồi!', 'Cố lên nào!', 'Oops! 🙈'];

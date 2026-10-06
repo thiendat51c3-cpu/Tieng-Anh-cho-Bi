@@ -61,7 +61,7 @@
           <div class="q-card">
             <button class="q-visual" data-listen aria-label="Nghe mẫu">${K.visual(w)}</button>
             <div class="q-word say">${K.esc(w.en)}</div>
-            <div class="sp-vi">${w.vi}</div>
+            ${K.hasPicture(w) ? `<div class="sp-vi">${w.vi}</div>` : ''}
             <button class="btn" data-listen style="--c:#06b6d4">🔊 Nghe mẫu</button>
           </div>
           <div class="mic-zone">

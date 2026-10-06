@@ -94,12 +94,15 @@
   let idSeq = 0;
   const newId = () => 'p' + Date.now().toString(36) + (idSeq++).toString(36);
 
-  function readBox() {
+  // Hồ sơ "trống": chưa chơi gì (dùng để thay thế bằng hồ sơ gia đình hoặc ghi đè khi khôi phục)
+  const isBlank = (d) => !d.welcomed || (d.stats.games === 0 && d.coins === 0 && !Object.keys(d.stickers).length && !Object.keys(d.learned).length);
+
+  function readBoxRaw() {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const o = JSON.parse(raw);
-        const box = { active: '', order: [], list: {}, meta: { lastBackup: num(o.meta && o.meta.lastBackup, 1e15) } };
+        const box = { active: '', order: [], list: {}, meta: { lastBackup: num(o.meta && o.meta.lastBackup, 1e15), familySeeded: !!(o.meta && o.meta.familySeeded) } };
         (Array.isArray(o.order) ? o.order : keysOf(o.list)).slice(0, MAX_PROFILES).forEach((id) => {
           const d = sanitize(o.list && o.list[id]);
           if (d && typeof id === 'string' && /^[a-z0-9]+$/.test(id)) { box.order.push(id); box.list[id] = d; }
@@ -116,7 +119,38 @@
       const old = localStorage.getItem(LEGACY_KEY); // chuyển dữ liệu bản cũ sang hồ sơ đầu tiên
       if (old) first = sanitize(JSON.parse(old)) || first;
     } catch (e) { /* bỏ qua */ }
-    return { active: id, order: [id], list: { [id]: first }, meta: { lastBackup: 0 } };
+    return { active: id, order: [id], list: { [id]: first }, meta: { lastBackup: 0, familySeeded: false } };
+  }
+
+  // Lần đầu trên thiết bị: tạo sẵn các hồ sơ gia đình (giữ lại hồ sơ đã có dữ liệu, thay hồ sơ trống)
+  function seedFamily(b) {
+    if (b.meta.familySeeded || !K.FAMILY || !K.FAMILY.length) return;
+    const existing = b.order.filter((id) => !isBlank(b.list[id])).map((id) => ({ id, d: b.list[id], used: false }));
+    const order = [];
+    const list = {};
+    K.FAMILY.forEach((f) => {
+      const hit = existing.find((e) => !e.used && e.d.name.toLowerCase() === f.name.toLowerCase());
+      if (hit) { hit.used = true; order.push(hit.id); list[hit.id] = hit.d; return; }
+      const d = defaults();
+      d.name = f.name;
+      d.avatar = f.avatar;
+      d.welcomed = true;
+      const id = newId();
+      order.push(id);
+      list[id] = d;
+    });
+    existing.filter((e) => !e.used).forEach((e) => { order.push(e.id); list[e.id] = e.d; });
+    b.order = order.slice(0, MAX_PROFILES);
+    b.list = {};
+    b.order.forEach((id) => { b.list[id] = list[id]; });
+    if (!b.order.includes(b.active)) b.active = b.order[0];
+    b.meta.familySeeded = true;
+  }
+
+  function readBox() {
+    const b = readBoxRaw();
+    seedFamily(b);
+    return b;
   }
 
   // `state` luôn là đối tượng của hồ sơ đang chơi; đổi hồ sơ thì thay nội dung tại chỗ
@@ -229,10 +263,10 @@
       const touched = [];
       items.slice(0, MAX_PROFILES).forEach((raw) => {
         const s = sanitize(raw);
-        if (!s) { res.skipped++; return; }
+        if (!s || (K.FAMILY && !K.isFamily(s.name))) { res.skipped++; return; } // chỉ nhận hồ sơ của 4 người chơi cố định
         s.welcomed = true;
         const same = s.name && box.order.find((id) => dataOf(id).welcomed && dataOf(id).name.toLowerCase() === s.name.toLowerCase());
-        if (same && (!ask || ask(s.name))) {
+        if (same && (isBlank(dataOf(same)) || !ask || ask(s.name))) {
           if (same === box.active) setState(s); else box.list[same] = s;
           touched.push(same);
           res.updated++;
@@ -277,7 +311,7 @@
     levelProgress() { return (state.coins % COINS_PER_LEVEL) / COINS_PER_LEVEL; },
 
     bestStars(topic, game) { return state.best[`${topic}/${game}`] || 0; },
-    topicStars(topic) { return K.gameOrder.reduce((n, g) => n + this.bestStars(topic, g), 0); },
+    topicStars(topic) { return (K.getTopic(topic) ? K.gamesFor(K.getTopic(topic)) : K.gameOrder).reduce((n, g) => n + this.bestStars(topic, g), 0); },
     totalStars() {
       return Object.values(state.best).reduce((n, v) => n + v, 0);
     },

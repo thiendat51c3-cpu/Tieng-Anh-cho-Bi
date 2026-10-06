@@ -27,12 +27,20 @@
     return t.content.firstElementChild;
   };
 
-  // Hình minh hoạ của một từ (emoji hoặc chấm màu)
+  // Hình minh hoạ của một từ: chấm màu, emoji, hoặc (nếu không có hình) nghĩa tiếng Việt
+  K.hasPicture = (w) => !!(w.e || w.c);
   K.visual = (w) =>
-    w.c ? `<span class="swatch" style="--c:${w.c}"></span>` : `<span class="emo">${w.e}</span>`;
+    w.c
+      ? `<span class="swatch" style="--c:${w.c}"></span>`
+      : w.e
+        ? `<span class="emo">${w.e}</span>`
+        : `<span class="vi-card">${K.esc(w.vi)}</span>`;
 
   K.registerGame = (g) => {
     K.games[g.id] = g;
     if (g.scored !== false) K.gameOrder.push(g.id);
   };
+
+  // Các trò chơi có thể chơi với một chủ đề (một số trò cần đủ từ hoặc câu mẫu)
+  K.gamesFor = (topic) => K.gameOrder.filter((id) => !K.games[id].available || K.games[id].available(topic));
 })();
