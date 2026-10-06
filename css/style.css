@@ -238,6 +238,7 @@ hr { border: 0; border-top: 2px dashed #e5defa; margin: 14px 0; width: 100%; }
   vertical-align: middle;
 }
 .emo { line-height: 1; }
+.art { width: 1em; height: 1em; display: inline-block; vertical-align: -0.12em; }
 
 /* ----- Đoán hình & Nghe chọn ----- */
 .q-card {
