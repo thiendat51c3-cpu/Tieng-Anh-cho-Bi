@@ -2,8 +2,16 @@
 (function () {
   const K = window.K;
   const app = document.getElementById('app');
-  const AVATARS = ['🦊', '🐼', '🐯', '🐸', '🐵', '🦄', '🐰', '🐻'];
   let current = null; // trò chơi đang chạy
+
+  let pickedMem = false;
+  const isPicked = () => {
+    try { return sessionStorage.getItem('kidEnglish.picked') === '1'; } catch (e) { return pickedMem; }
+  };
+  const setPicked = () => {
+    pickedMem = true;
+    try { sessionStorage.setItem('kidEnglish.picked', '1'); } catch (e) { /* bỏ qua */ }
+  };
 
   /* ---------- Hộp thoại ---------- */
   function modal(html, dismissible) {
@@ -19,7 +27,7 @@
 
   function avatarPicker(selected) {
     return `<div class="avatars" role="radiogroup" aria-label="Chọn hình đại diện">
-      ${AVATARS.map((a) => `<button type="button" class="avatar-opt${a === selected ? ' on' : ''}" data-avatar="${a}" role="radio" aria-checked="${a === selected}">${a}</button>`).join('')}
+      ${K.AVATARS.map((a) => `<button type="button" class="avatar-opt${a === selected ? ' on' : ''}" data-avatar="${a}" role="radio" aria-checked="${a === selected}">${K.avatarHtml(a)}</button>`).join('')}
     </div>`;
   }
   function wireAvatars(m) {
@@ -33,7 +41,7 @@
       })
     );
   }
-  const chosenAvatar = (m) => (m.querySelector('.avatar-opt.on') || {}).dataset.avatar || '🦊';
+  const chosenAvatar = (m) => (m.querySelector('.avatar-opt.on') || {}).dataset.avatar || K.AVATARS[0];
 
   function openWelcome() {
     const s = K.store.state;
@@ -46,10 +54,12 @@
        </label>
        <div class="field">Chọn bạn đồng hành:</div>
        ${avatarPicker(s.avatar)}
-       <button class="btn big" data-ok style="--c:#22c55e">🚀 Bắt đầu thôi!</button>`,
+       <button class="btn big" data-ok style="--c:#22c55e">🚀 Bắt đầu thôi!</button>
+       <button class="linkbtn" data-restore>Đã có file sao lưu? Khôi phục tiến trình</button>`,
       false
     );
     m.dataset.keep = '1';
+    m.querySelector('[data-restore]').addEventListener('click', openBackup);
     wireAvatars(m);
     m.querySelector('[data-ok]').addEventListener('click', () => {
       s.name = m.querySelector('[data-name]').value.trim();
@@ -58,6 +68,7 @@
       K.store.save();
       K.audio.sfx('correct');
       K.audio.speak(s.name ? `Hello, ${s.name}!` : 'Hello!');
+      setPicked();
       m.close();
       route();
     });
@@ -75,12 +86,15 @@
        ${K.audio.hasSpeech ? '' : '<p class="note">Trình duyệt này chưa hỗ trợ giọng đọc. Hãy thử Chrome, Edge hoặc Safari.</p>'}
        <button class="btn" data-test style="--c:#06b6d4">🎧 Thử giọng đọc</button>
        <hr>
+       <button class="btn" data-go="#/who" data-close style="--c:#7c5cff">👥 Đổi người chơi</button>
+       <button class="btn" data-act="backup" style="--c:#06b6d4">💾 Sao lưu &amp; khôi phục</button>
+       <hr>
        <label class="field">Tên của bạn
          <input type="text" maxlength="14" data-name autocomplete="off" value="${K.esc(s.name)}">
        </label>
        ${avatarPicker(s.avatar)}
        <hr>
-       <button class="btn" data-reset style="--c:#ef4444">🗑️ Xóa toàn bộ tiến trình</button>
+       <button class="btn" data-reset style="--c:#ef4444">🗑️ Xóa tiến trình của bé này</button>
        <button class="btn big" data-close style="--c:#22c55e">Xong</button>`
     );
     wireAvatars(m);
@@ -92,7 +106,7 @@
     );
     m.querySelector('[data-test]').addEventListener('click', () => K.audio.speak('Hello! Nice to meet you!'));
     m.querySelector('[data-reset]').addEventListener('click', () => {
-      if (window.confirm('Xóa hết sao, xu và huy hiệu? Không thể khôi phục lại đâu nhé!')) {
+      if (window.confirm('Xóa hết sao, xu, sticker và huy hiệu của bé này? Không thể khôi phục lại (trừ khi đã sao lưu).')) {
         K.store.reset();
         m.close();
         K.store.touchDay();
@@ -159,8 +173,8 @@
     app.innerHTML = `
       <section class="screen home">
         <header class="topbar">
-          <button class="profile" data-act="settings" aria-label="Hồ sơ và cài đặt">
-            <span class="avatar">${s.avatar}</span>
+          <button class="profile" data-go="#/who" aria-label="Đổi người chơi">
+            <span class="avatar">${K.avatarHtml(s.avatar)}</span>
             <span class="pname">${s.name ? K.esc(s.name) : 'Bé yêu'}</span>
           </button>
           <div class="pills">
@@ -178,6 +192,13 @@
           <div class="mascot big" data-act="owl">🦉</div>
           <div class="bubble">Xin chào <b>${who}</b>! Hôm nay mình học gì nào? 🌟</div>
         </div>
+
+        ${K.store.backupDue() ? `<div class="backup-banner">
+          <span class="bb-icon">💾</span>
+          <div><b>Nhớ sao lưu nhé!</b><small>Bé chơi nhiều rồi, hãy lưu lại để không mất tiến trình.</small></div>
+          <button class="btn" data-act="backup" style="--c:#06b6d4">Sao lưu</button>
+          <button class="bb-x" data-act="snooze" aria-label="Để sau">✕</button>
+        </div>` : ''}
 
         <div class="level-card">
           <span class="lvl">Cấp ${lvl}</span>
@@ -535,6 +556,144 @@
     });
   }
 
+  /* ---------- Chọn người chơi ---------- */
+  function renderWho() {
+    const ps = K.store.profiles().filter((p) => p.welcomed);
+    app.innerHTML = `
+      <section class="screen who">
+        <header class="topbar">
+          <button class="btn-round" data-go="#/" aria-label="Về trang chủ">←</button>
+          <h1 class="ttitle"><span>👥</span> Ai đang chơi nào? <small>Chọn hồ sơ của bé</small></h1>
+        </header>
+        <div class="who-grid">
+          ${ps.map((p) => `
+            <div class="who-card${p.active ? ' active' : ''}">
+              <button class="who-pick" data-act="pick" data-id="${p.id}">
+                <span class="avatar xxl">${K.avatarHtml(p.avatar)}</span>
+                <b>${p.name ? K.esc(p.name) : 'Bé yêu'}</b>
+                <small>Cấp ${p.level} · ⭐ ${p.stars} · 🪙 ${p.coins}</small>
+              </button>
+              <button class="who-edit" data-act="editprofile" data-id="${p.id}" aria-label="Sửa hồ sơ ${p.name ? K.esc(p.name) : ''}">✏️</button>
+            </div>`).join('')}
+          ${ps.length < K.store.MAX_PROFILES ? `
+            <button class="who-card add" data-act="addprofile">
+              <span class="avatar xxl plus">＋</span><b>Thêm bạn nhỏ</b>
+            </button>` : ''}
+        </div>
+        <div class="who-actions">
+          <button class="btn" data-act="backup" style="--c:#06b6d4">💾 Sao lưu &amp; khôi phục</button>
+        </div>
+      </section>`;
+  }
+
+  function openAddProfile() {
+    const used = new Set(K.store.profiles().map((p) => p.avatar));
+    const m = modal(
+      `<div class="mascot big">🦉</div>
+       <h2>Thêm bạn nhỏ</h2>
+       <label class="field">Tên của bé
+         <input type="text" maxlength="14" placeholder="Nhập tên của bé" data-name autocomplete="off">
+       </label>
+       <div class="field">Chọn bạn đồng hành:</div>
+       ${avatarPicker(K.AVATARS.find((a) => !used.has(a)) || K.AVATARS[0])}
+       <button class="btn big" data-ok style="--c:#22c55e">✅ Tạo hồ sơ</button>
+       <button class="btn" data-close style="--c:#64748b">Hủy</button>`
+    );
+    wireAvatars(m);
+    m.querySelector('[data-ok]').addEventListener('click', () => {
+      const id = K.store.createProfile(m.querySelector('[data-name]').value, chosenAvatar(m));
+      if (!id) { K.fx.toast(`Tối đa ${K.store.MAX_PROFILES} hồ sơ thôi nhé!`); return; }
+      K.store.switchProfile(id);
+      setPicked();
+      K.audio.sfx('correct');
+      m.close();
+      if (location.hash === '#/') route(); else location.hash = '#/';
+    });
+  }
+
+  function openEditProfile(id) {
+    const p = K.store.profiles().find((x) => x.id === id);
+    if (!p) return;
+    const m = modal(
+      `<h2>✏️ Sửa hồ sơ</h2>
+       <label class="field">Tên của bé
+         <input type="text" maxlength="14" data-name autocomplete="off" value="${K.esc(p.name)}">
+       </label>
+       ${avatarPicker(p.avatar)}
+       <button class="btn big" data-save style="--c:#22c55e">💾 Lưu</button>
+       <button class="btn" data-export style="--c:#06b6d4">⬇️ Sao lưu riêng hồ sơ này</button>
+       <button class="btn" data-del style="--c:#ef4444"${K.store.profileCount() <= 1 ? ' disabled' : ''}>🗑️ Xóa hồ sơ</button>
+       <button class="btn" data-close style="--c:#64748b">Đóng</button>`
+    );
+    wireAvatars(m);
+    m.querySelector('[data-save]').addEventListener('click', () => {
+      K.store.updateProfile(id, m.querySelector('[data-name]').value, chosenAvatar(m));
+      m.close();
+      route();
+    });
+    m.querySelector('[data-export]').addEventListener('click', () => {
+      downloadBackup(K.store.exportData([id]), p.name);
+      K.fx.toast('Đã tải file sao lưu 💾');
+    });
+    m.querySelector('[data-del]').addEventListener('click', () => {
+      if (window.confirm(`Xóa hồ sơ "${p.name || 'Bé yêu'}"? Toàn bộ sao, sticker và huy hiệu của bé sẽ mất (trừ khi đã sao lưu).`)) {
+        K.store.deleteProfile(id);
+        m.close();
+        route();
+      }
+    });
+  }
+
+  function downloadBackup(text, who) {
+    const d = new Date();
+    const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const tag = who ? '-' + who.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '') : '';
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+    a.download = `tien-trinh-hoc-tieng-anh${tag}-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  }
+
+  function openBackup() {
+    const n = K.store.profiles().filter((p) => p.welcomed).length;
+    const m = modal(
+      `<h2>💾 Sao lưu &amp; khôi phục</h2>
+       <p class="note-ok">Tiến trình được lưu trong trình duyệt này. Hãy tải file sao lưu để không bị mất khi đổi máy hoặc xóa dữ liệu trình duyệt.</p>
+       <button class="btn big" data-export-all style="--c:#22c55e">⬇️ Tải file sao lưu</button>
+       <small class="muted">Gồm ${n} hồ sơ</small>
+       <label class="btn big" style="--c:#7c5cff">⬆️ Khôi phục từ file
+         <input type="file" accept=".json,application/json" data-import hidden>
+       </label>
+       <button class="btn" data-close style="--c:#64748b">Đóng</button>`
+    );
+    m.querySelector('[data-export-all]').addEventListener('click', () => {
+      downloadBackup(K.store.exportData());
+      K.fx.toast('Đã tải file sao lưu 💾');
+    });
+    m.querySelector('[data-import]').addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.size > 2e6) { K.fx.toast('Tệp quá lớn, không phải file sao lưu.'); return; }
+      const res = K.store.importData(await file.text(), (name) =>
+        window.confirm(`Hồ sơ "${name}" đã có trên máy này.\nBấm OK để ghi đè bằng bản sao lưu, hoặc Hủy để tạo thêm một bản sao.`)
+      );
+      e.target.value = '';
+      if (res.error) { K.fx.toast('⚠️ ' + res.error); return; }
+      document.querySelectorAll('#modal-root .modal-back').forEach((x) => x.remove());
+      K.fx.toast(`✅ Đã khôi phục: ${res.added} mới, ${res.updated} cập nhật${res.skipped ? `, bỏ qua ${res.skipped}` : ''}`);
+      if (K.store.profiles().filter((p) => p.welcomed).length > 1) {
+        // Nhiều hồ sơ: để bé chọn "Ai đang chơi?"
+        if (location.hash === '#/who') route(); else location.hash = '#/who';
+      } else {
+        setPicked();
+        route();
+      }
+    });
+  }
+
   /* ---------- Phần thưởng ---------- */
   function renderRewards() {
     const s = K.store.state;
@@ -550,7 +709,7 @@
         </header>
 
         <div class="level-card big">
-          <span class="avatar xl">${s.avatar}</span>
+          <span class="avatar xl">${K.avatarHtml(s.avatar)}</span>
           <div class="lvl-wrap">
             <span class="lvl">Cấp ${lvl}</span>
             <span class="lvl-bar"><i style="width:${pct}%"></i></span>
@@ -602,6 +761,7 @@
     if (parts[0] === 'play' && K.getTopic(parts[1]) && K.games[parts[2]]) {
       return renderPlay(K.getTopic(parts[1]), K.games[parts[2]]);
     }
+    if (parts[0] === 'who') return renderWho();
     if (parts[0] === 'rewards') return renderRewards();
     if (parts[0] === 'stickers') return renderStickers();
     if (parts.length) { location.hash = '#/'; return; }
@@ -631,6 +791,16 @@
     if (act.dataset.act === 'settings') openSettings();
     else if (act.dataset.act === 'again') route();
     else if (act.dataset.act === 'song') openSong();
+    else if (act.dataset.act === 'backup') openBackup();
+    else if (act.dataset.act === 'snooze') { K.store.snoozeBackup(); rerender(); }
+    else if (act.dataset.act === 'addprofile') openAddProfile();
+    else if (act.dataset.act === 'editprofile') openEditProfile(act.dataset.id);
+    else if (act.dataset.act === 'pick') {
+      K.store.switchProfile(act.dataset.id);
+      setPicked();
+      K.audio.sfx('correct');
+      if (location.hash === '#/') route(); else location.hash = '#/';
+    }
     else if (act.dataset.act === 'gift') openGiftModal();
     else if (act.dataset.act === 'claim') {
       const n = K.store.claimMission(act.dataset.id);
@@ -664,8 +834,13 @@
   window.addEventListener('hashchange', route);
 
   K.store.touchDay();
+  // Nhiều hồ sơ: hỏi "Ai đang chơi?" mỗi lần mở app
+  if (K.store.profiles().filter((p) => p.welcomed).length > 1 && !isPicked() && (!location.hash || location.hash === '#/' || location.hash === '#')) {
+    history.replaceState(null, '', '#/who');
+  }
   route();
   if (!K.store.state.welcomed) openWelcome();
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { /* bỏ qua */ }
 
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

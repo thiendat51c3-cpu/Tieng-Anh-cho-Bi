@@ -178,6 +178,59 @@
     epic: { name: 'Siêu hiếm 🌟', weight: 5, color: '#f59e0b' },
   };
 
+  // Hình đại diện: các nhân vật tự vẽ (SVG) + emoji
+  const svg = (inner) => `<svg viewBox="0 0 100 100" role="img" aria-hidden="true">${inner}</svg>`;
+  const EYES = (y, dx) => `<circle cx="${50 - dx}" cy="${y}" r="4.5" fill="#2d2250"/><circle cx="${50 + dx}" cy="${y}" r="4.5" fill="#2d2250"/><circle cx="${51.4 - dx}" cy="${y - 1.6}" r="1.5" fill="#fff"/><circle cx="${51.4 + dx}" cy="${y - 1.6}" r="1.5" fill="#fff"/>`;
+  K.AVATAR_SVG = {
+    // Capybara đội trái quýt
+    capy: svg(
+      '<circle cx="25" cy="32" r="9" fill="#8f6234"/><circle cx="75" cy="32" r="9" fill="#8f6234"/>' +
+      '<circle cx="25" cy="32" r="4.5" fill="#c68f5a"/><circle cx="75" cy="32" r="4.5" fill="#c68f5a"/>' +
+      '<rect x="13" y="28" width="74" height="62" rx="32" fill="#b8864f"/>' +
+      '<ellipse cx="50" cy="68" rx="29" ry="19" fill="#d9aa72"/>' +
+      EYES(48, 17) +
+      '<ellipse cx="24" cy="62" rx="6" ry="4" fill="#ff9aa2" opacity=".55"/><ellipse cx="76" cy="62" rx="6" ry="4" fill="#ff9aa2" opacity=".55"/>' +
+      '<ellipse cx="42" cy="62" rx="3" ry="4" fill="#5a3b1d"/><ellipse cx="58" cy="62" rx="3" ry="4" fill="#5a3b1d"/>' +
+      '<path d="M43 75 Q50 81 57 75" stroke="#5a3b1d" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+      '<circle cx="50" cy="25" r="11" fill="#ffa63d"/><path d="M51 15 q8 -8 15 -3 q-6 8 -15 3z" fill="#4cae4f"/>'
+    ),
+    // Kỳ nhông Mexico (axolotl)
+    axolotl: svg(
+      [-1, 1].map((s) => [[-28, 33], [0, 48], [28, 63]].map(([r, y]) =>
+        `<ellipse cx="${50 + s * 37}" cy="${y}" rx="13" ry="4.5" fill="#ff7fa8" transform="rotate(${s * r} ${50 + s * 37} ${y})"/>`).join('')).join('') +
+      '<ellipse cx="50" cy="54" rx="35" ry="31" fill="#ffc2d4"/>' +
+      EYES(50, 14) +
+      '<circle cx="30" cy="60" r="5.5" fill="#ff9cb8" opacity=".8"/><circle cx="70" cy="60" r="5.5" fill="#ff9cb8" opacity=".8"/>' +
+      '<path d="M39 63 Q50 75 61 63" stroke="#2d2250" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    ),
+    // Quái vật nhỏ (nhân vật gốc)
+    monster: svg(
+      '<path d="M32 26 L26 8" stroke="#7c5cff" stroke-width="4" stroke-linecap="round"/><circle cx="26" cy="8" r="5" fill="#ffd23f"/>' +
+      '<path d="M68 26 L74 8" stroke="#7c5cff" stroke-width="4" stroke-linecap="round"/><circle cx="74" cy="8" r="5" fill="#ffd23f"/>' +
+      '<circle cx="50" cy="58" r="37" fill="#a78bfa"/>' +
+      '<circle cx="36" cy="50" r="10" fill="#fff"/><circle cx="64" cy="50" r="10" fill="#fff"/>' +
+      '<circle cx="38" cy="51" r="5" fill="#2d2250"/><circle cx="62" cy="51" r="5" fill="#2d2250"/>' +
+      '<circle cx="39.5" cy="49" r="1.7" fill="#fff"/><circle cx="63.5" cy="49" r="1.7" fill="#fff"/>' +
+      '<path d="M30 68 Q50 90 70 68 Q50 76 30 68z" fill="#fff" stroke="#2d2250" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<path d="M41 72 l3 6 l3 -5 M53 73 l3 5 l3 -6" stroke="#2d2250" stroke-width="2" fill="none" stroke-linejoin="round"/>' +
+      '<circle cx="22" cy="66" r="5" fill="#ff8fb3" opacity=".7"/><circle cx="78" cy="66" r="5" fill="#ff8fb3" opacity=".7"/>'
+    ),
+    // Gấu trúc đỏ
+    redpanda: svg(
+      '<circle cx="24" cy="30" r="12" fill="#d9622b"/><circle cx="76" cy="30" r="12" fill="#d9622b"/>' +
+      '<circle cx="24" cy="31" r="6" fill="#fff"/><circle cx="76" cy="31" r="6" fill="#fff"/>' +
+      '<ellipse cx="50" cy="56" rx="37" ry="31" fill="#e8793a"/>' +
+      '<ellipse cx="28" cy="64" rx="13" ry="11" fill="#fff"/><ellipse cx="72" cy="64" rx="13" ry="11" fill="#fff"/>' +
+      '<path d="M40 38 q-1 -8 -4 -10 M60 38 q1 -8 4 -10" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"/>' +
+      EYES(50, 14) +
+      '<path d="M32 56 q-3 8 0 12 M68 56 q3 8 0 12" stroke="#7a2e10" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+      '<ellipse cx="50" cy="68" rx="12" ry="9" fill="#fff"/><ellipse cx="50" cy="63" rx="4.5" ry="3.2" fill="#2d2250"/>' +
+      '<path d="M44 72 Q50 77 56 72" stroke="#2d2250" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
+    ),
+  };
+  K.AVATARS = ['capy', 'axolotl', 'monster', 'redpanda', '🦊', '🐼', '🐯', '🐸', '🐵', '🦄', '🐰', '🐻'];
+  K.avatarHtml = (a) => K.AVATAR_SVG[a] || K.esc(a);
+
   K.PRAISE = ['Great job! 🎉', 'Tuyệt vời!', 'Excellent! ⭐', 'Giỏi quá!', 'Perfect! 🌟', 'Yay! 🥳', 'Đúng rồi!', 'Wow! 👏'];
   K.OOPS = ['Thử lại nhé! 💪', 'Try again!', 'Gần đúng rồi!', 'Cố lên nào!', 'Oops! 🙈'];
 })();

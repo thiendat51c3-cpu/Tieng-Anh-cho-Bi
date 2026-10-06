@@ -20,6 +20,9 @@ Web app học tiếng Anh cơ bản cho trẻ em qua các trò chơi vui nhộn.
   - 🎯 3 nhiệm vụ mỗi ngày, hoàn thành cả 3 nhận hộp quà bí mật
   - 🎁 Hộp quà & **bộ sưu tập 48 sticker** (thường, hiếm, siêu hiếm); mở bằng xu hoặc quà miễn phí khi lên cấp
   - Sao (tối đa 3 sao mỗi trò), xu 🪙, cấp độ, 11 huy hiệu, chuỗi ngày học, sổ từ vựng
+- **Nhiều hồ sơ trên một thiết bị**: mỗi bé một hồ sơ riêng (tên, hình đại diện, sao, sticker, nhiệm vụ). Mở app là chọn "Ai đang chơi nào?".
+- **Sao lưu & khôi phục**: tải file sao lưu để giữ tiến trình khi đổi máy hoặc bị xóa dữ liệu trình duyệt; khôi phục từ file có kiểm tra và làm sạch dữ liệu. App nhắc sao lưu sau khi bé chơi nhiều.
+- **Hình đại diện tự vẽ**: capybara đội quýt, kỳ nhông axolotl, quái vật nhỏ, gấu trúc đỏ, cùng các emoji dễ thương.
 - Phát âm bằng giọng đọc của trình duyệt (Web Speech API), có chế độ đọc chậm. Âm thanh hiệu ứng tạo bằng Web Audio, không cần file.
 - Lưu tiến trình trên máy (localStorage), dùng offline được (PWA), hỗ trợ điện thoại và máy tính bảng.
 
@@ -46,8 +49,8 @@ Sửa `js/data.js`. Mỗi từ có dạng `w('cat', 'con mèo', '🐱')` (tiến
 ```
 index.html          Trang chính
 css/style.css       Giao diện
-js/data.js          Từ vựng, chủ đề
-js/store.js         Lưu tiến trình, huy hiệu
+js/data.js          Từ vựng, chủ đề, sticker, hình đại diện
+js/store.js         Hồ sơ người chơi, lưu tiến trình, sao lưu, huy hiệu
 js/audio.js         Phát âm và âm thanh hiệu ứng
 js/fx.js            Pháo giấy, hiệu ứng
 js/games/*.js       Các trò chơi (học từ, chọn đáp án, nói, bóng bay, xếp chữ, lật hình, đúng/sai)
