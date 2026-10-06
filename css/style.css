@@ -716,3 +716,16 @@ label.btn { cursor: pointer; }
 .q-visual:has(.vi-card), .tf-visual:has(.vi-card), .sp-visual:has(.vi-card), .fc-visual:has(.vi-card) { font-size: 2.1rem; line-height: 1.2; padding: 22px 12px; }
 .q-visual:has(.vi-card) .vi-card, .tf-visual:has(.vi-card) .vi-card, .sp-visual:has(.vi-card) .vi-card { font-size: 1em; max-width: 10em; }
 .fc-visual:has(.vi-card) .vi-card { font-size: 1em; }
+
+/* ----- Đồng bộ đám mây ----- */
+.pill.cloud { color: #0369a1; }
+.cloud-box { display: grid; gap: 8px; justify-items: center; width: 100%; text-align: center; }
+.cloud-box b { font-size: 1.15rem; }
+.family-code { padding: 10px 14px; border-radius: 14px; background: #eef7ff; border: 3px dashed #7dc4f5; font-weight: 800; font-size: 1.15rem; letter-spacing: 0.06em; font-family: ui-monospace, Menlo, Consolas, monospace; word-break: break-all; user-select: all; }
+.cloud-msg { min-height: 1.3em; font-weight: 700; color: var(--ink-soft); font-size: 0.95rem; }
+.cloud-msg.bad { color: var(--bad); }
+.cloud-join { display: grid; gap: 8px; justify-items: center; width: 100%; }
+.cloud-join[hidden] { display: none; }
+.code-input { font-size: 1rem; letter-spacing: 0.08em; max-width: 100%; }
+.cloud-banner { background: #eefbea; border-color: #86e0a0; }
+.family-code { font-size: 1rem; letter-spacing: 0.02em; white-space: nowrap; }
