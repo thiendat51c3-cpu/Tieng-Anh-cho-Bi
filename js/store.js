@@ -1,12 +1,15 @@
 /* Lưu tiến trình học (localStorage): xu, sao, huy hiệu, chuỗi ngày học, cài đặt */
 (function () {
   const K = (window.K = window.K || {});
-  const KEY = 'kidEnglish.v1';
+  const KEY = 'kidEnglish.v2'; // nhiều hồ sơ
+  const LEGACY_KEY = 'kidEnglish.v1'; // bản cũ chỉ có một hồ sơ
+  const MAX_PROFILES = 8;
+  const BACKUP_APP = 'be-vui-hoc-tieng-anh';
   const COINS_PER_LEVEL = 200;
 
   const defaults = () => ({
     name: '',
-    avatar: '🦊',
+    avatar: 'capy',
     coins: 0,
     stats: { games: 0, perfect: 0 },
     best: {}, // "topic/game" -> số sao cao nhất (0-3)
@@ -24,24 +27,6 @@
     settings: { sound: true, speech: true, slow: true },
   });
 
-  function merge(base, o) {
-    for (const k in o) {
-      if (o[k] && typeof o[k] === 'object' && !Array.isArray(o[k]) && base[k] && typeof base[k] === 'object') {
-        merge(base[k], o[k]);
-      } else base[k] = o[k];
-    }
-    return base;
-  }
-
-  function load() {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) return merge(defaults(), JSON.parse(raw));
-    } catch (e) { /* bỏ qua: dùng mặc định */ }
-    return defaults();
-  }
-
-  const state = load();
   const pad = (n) => String(n).padStart(2, '0');
   const dayKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
@@ -69,18 +54,208 @@
 
   K.BADGES = BADGES;
 
+  /* ----- Kiểm tra và làm sạch dữ liệu (từ localStorage hoặc file sao lưu) ----- */
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+  const num = (v, max) => (Number.isFinite(+v) ? Math.max(0, Math.min(max || 1e7, Math.floor(+v))) : 0);
+  const KEY_RE = /^[a-z0-9-]+\/[a-z]+$/;
+  const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+  const keysOf = (o) => (o && typeof o === 'object' && !Array.isArray(o) ? Object.keys(o) : []);
+
+  function sanitize(o) {
+    if (!o || typeof o !== 'object' || Array.isArray(o)) return null;
+    const d = defaults();
+    d.name = String(o.name || '').replace(/[<>]/g, '').slice(0, 14);
+    d.avatar = K.AVATARS.includes(o.avatar) ? o.avatar : d.avatar;
+    d.coins = num(o.coins);
+    d.stats.games = num(o.stats && o.stats.games);
+    d.stats.perfect = num(o.stats && o.stats.perfect);
+    keysOf(o.best).forEach((k) => { if (KEY_RE.test(k)) d.best[k] = num(o.best[k], 3); });
+    keysOf(o.learned).forEach((k) => { if (/^[a-z0-9-]+$/.test(k)) d.learned[k] = true; });
+    keysOf(o.mastered).forEach((k) => { if (K.findWord(k)) d.mastered[k] = num(o.mastered[k], 1e5); });
+    keysOf(o.topicsPlayed).forEach((k) => { if (/^[a-z0-9-]+$/.test(k)) d.topicsPlayed[k] = true; });
+    keysOf(o.gamesPlayed).forEach((k) => { if (/^[a-z]+$/.test(k)) d.gamesPlayed[k] = true; });
+    d.streak.count = num(o.streak && o.streak.count, 10000);
+    d.streak.last = o.streak && DAY_RE.test(o.streak.last) ? o.streak.last : '';
+    BADGES.forEach((b) => { if (o.badges && o.badges[b.id]) d.badges[b.id] = true; });
+    d.welcomed = !!o.welcomed;
+    const dl = o.daily || {};
+    d.daily.date = DAY_RE.test(dl.date) ? dl.date : '';
+    ['games', 'correct', 'learn'].forEach((k) => { d.daily[k] = num(dl[k], 10000); });
+    K.MISSIONS.forEach((m) => { if (dl.claimed && dl.claimed[m.id]) d.daily.claimed[m.id] = true; });
+    d.daily.chest = !!dl.chest;
+    K.STICKERS.forEach((st) => { if (o.stickers && o.stickers[st.id]) d.stickers[st.id] = Math.max(1, num(o.stickers[st.id], 1e4)); });
+    d.gifts = num(o.gifts, 1e4);
+    d.lastLevel = Math.max(1, num(o.lastLevel, 1e5));
+    ['sound', 'speech', 'slow'].forEach((k) => { if (o.settings && typeof o.settings[k] === 'boolean') d.settings[k] = o.settings[k]; });
+    return d;
+  }
+
+  /* ----- Hộp lưu: nhiều hồ sơ ----- */
+  let idSeq = 0;
+  const newId = () => 'p' + Date.now().toString(36) + (idSeq++).toString(36);
+
+  function readBox() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const o = JSON.parse(raw);
+        const box = { active: '', order: [], list: {}, meta: { lastBackup: num(o.meta && o.meta.lastBackup, 1e15) } };
+        (Array.isArray(o.order) ? o.order : keysOf(o.list)).slice(0, MAX_PROFILES).forEach((id) => {
+          const d = sanitize(o.list && o.list[id]);
+          if (d && typeof id === 'string' && /^[a-z0-9]+$/.test(id)) { box.order.push(id); box.list[id] = d; }
+        });
+        if (box.order.length) {
+          box.active = box.order.includes(o.active) ? o.active : box.order[0];
+          return box;
+        }
+      }
+    } catch (e) { /* dữ liệu hỏng: bỏ qua */ }
+    const id = newId();
+    let first = defaults();
+    try {
+      const old = localStorage.getItem(LEGACY_KEY); // chuyển dữ liệu bản cũ sang hồ sơ đầu tiên
+      if (old) first = sanitize(JSON.parse(old)) || first;
+    } catch (e) { /* bỏ qua */ }
+    return { active: id, order: [id], list: { [id]: first }, meta: { lastBackup: 0 } };
+  }
+
+  // `state` luôn là đối tượng của hồ sơ đang chơi; đổi hồ sơ thì thay nội dung tại chỗ
+  const state = {};
+  const setState = (data) => {
+    Object.keys(state).forEach((k) => delete state[k]);
+    Object.assign(state, data);
+  };
+  const box = readBox();
+  setState(box.list[box.active]);
+  box.list[box.active] = state;
+  const dataOf = (id) => (id === box.active ? state : box.list[id]);
+
   K.store = {
     state,
     COINS_PER_LEVEL,
 
     save() {
-      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* chế độ riêng tư */ }
+      box.list[box.active] = state;
+      try {
+        localStorage.setItem(KEY, JSON.stringify({ v: 2, active: box.active, order: box.order, meta: box.meta, list: box.list }));
+      } catch (e) { /* chế độ riêng tư */ }
     },
 
+    // Xóa tiến trình của hồ sơ đang chơi (giữ tên và hình đại diện)
     reset() {
-      Object.keys(state).forEach((k) => delete state[k]);
-      Object.assign(state, defaults());
+      const keep = { name: state.name, avatar: state.avatar };
+      setState(defaults());
+      Object.assign(state, keep, { welcomed: true });
       this.save();
+    },
+
+    /* ----- Hồ sơ người chơi ----- */
+    MAX_PROFILES,
+    activeId() { return box.active; },
+    profileCount() { return box.order.length; },
+    profiles() {
+      return box.order.map((id) => {
+        const d = dataOf(id);
+        return {
+          id, name: d.name, avatar: d.avatar, coins: d.coins, welcomed: d.welcomed, active: id === box.active,
+          level: Math.floor(d.coins / COINS_PER_LEVEL) + 1,
+          stars: Object.values(d.best).reduce((n, v) => n + v, 0),
+        };
+      });
+    },
+    createProfile(name, avatar) {
+      if (box.order.length >= MAX_PROFILES) return null;
+      const d = defaults();
+      d.name = String(name || '').replace(/[<>]/g, '').trim().slice(0, 14);
+      d.avatar = K.AVATARS.includes(avatar) ? avatar : d.avatar;
+      d.welcomed = true;
+      const id = newId();
+      box.order.push(id);
+      box.list[id] = d;
+      this.save();
+      return id;
+    },
+    updateProfile(id, name, avatar) {
+      const d = dataOf(id);
+      if (!d) return;
+      d.name = String(name || '').replace(/[<>]/g, '').trim().slice(0, 14);
+      if (K.AVATARS.includes(avatar)) d.avatar = avatar;
+      this.save();
+    },
+    switchProfile(id) {
+      if (!box.list[id]) return false;
+      if (id !== box.active) {
+        box.list[box.active] = clone(state);
+        box.active = id;
+        setState(box.list[id]);
+        box.list[id] = state;
+      }
+      this.touchDay();
+      this.save();
+      return true;
+    },
+    deleteProfile(id) {
+      if (box.order.length <= 1 || !box.list[id]) return false;
+      if (id === box.active) this.switchProfile(box.order.find((x) => x !== id));
+      delete box.list[id];
+      box.order = box.order.filter((x) => x !== id);
+      this.save();
+      return true;
+    },
+
+    /* ----- Sao lưu và khôi phục ----- */
+    exportData(ids) {
+      const list = (ids || box.order).filter((id) => box.list[id]).map((id) => clone(dataOf(id)));
+      box.meta.lastBackup = Date.now();
+      this.save();
+      return JSON.stringify({ app: BACKUP_APP, version: 1, exportedAt: new Date().toISOString(), profiles: list }, null, 1);
+    },
+    backupDue() {
+      return state.stats.games >= 5 && Date.now() - (box.meta.lastBackup || 0) > 14 * 864e5;
+    },
+    snoozeBackup() {
+      box.meta.lastBackup = Date.now() - 7 * 864e5; // nhắc lại sau 7 ngày
+      this.save();
+    },
+    // ask(tên) trả về true để ghi đè hồ sơ trùng tên, false để tạo bản sao
+    importData(text, ask) {
+      let data;
+      try { data = JSON.parse(text); } catch (e) { return { error: 'Tệp không đúng định dạng.' }; }
+      const items = data && Array.isArray(data.profiles) ? data.profiles : data && typeof data === 'object' && ('coins' in data || 'best' in data) ? [data] : null;
+      if (!items || !items.length || (data.app && data.app !== BACKUP_APP)) return { error: 'Đây không phải tệp sao lưu của ứng dụng.' };
+
+      const res = { added: 0, updated: 0, skipped: 0 };
+      const blanks = box.order.filter((id) => !dataOf(id).welcomed); // hồ sơ trống chưa thiết lập
+      const touched = [];
+      items.slice(0, MAX_PROFILES).forEach((raw) => {
+        const s = sanitize(raw);
+        if (!s) { res.skipped++; return; }
+        s.welcomed = true;
+        const same = s.name && box.order.find((id) => dataOf(id).welcomed && dataOf(id).name.toLowerCase() === s.name.toLowerCase());
+        if (same && (!ask || ask(s.name))) {
+          if (same === box.active) setState(s); else box.list[same] = s;
+          touched.push(same);
+          res.updated++;
+          return;
+        }
+        if (box.order.length - blanks.length >= MAX_PROFILES) { res.skipped++; return; }
+        if (same) s.name = s.name.slice(0, 9) + ' (2)';
+        const id = newId();
+        box.order.push(id);
+        box.list[id] = s;
+        touched.push(id);
+        res.added++;
+      });
+      if (touched.length) {
+        blanks.forEach((id) => {
+          if (touched.includes(id) || !box.order.includes(id)) return;
+          if (id === box.active) this.switchProfile(touched[0]);
+          delete box.list[id];
+          box.order = box.order.filter((x) => x !== id);
+        });
+      }
+      this.save();
+      return res;
     },
 
     touchDay() {
