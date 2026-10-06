@@ -106,7 +106,7 @@
     );
     m.querySelector('[data-test]').addEventListener('click', () => K.audio.speak('Hello! Nice to meet you!'));
     m.querySelector('[data-reset]').addEventListener('click', () => {
-      if (window.confirm('Xóa hết sao, xu, sticker và huy hiệu của bé này? Không thể khôi phục lại (trừ khi đã sao lưu).')) {
+      if (window.confirm('Xóa hết sao, xu, sticker và huy hiệu của hồ sơ này? Không thể khôi phục lại (trừ khi đã sao lưu).')) {
         K.store.reset();
         m.close();
         K.store.touchDay();
@@ -562,12 +562,12 @@
     app.innerHTML = `
       <section class="screen who">
         <header class="topbar">
-          <button class="btn-round" data-go="#/" aria-label="Về trang chủ">←</button>
-          <h1 class="ttitle"><span>👥</span> Ai đang chơi nào? <small>Chọn hồ sơ của bé</small></h1>
+          ${isPicked() ? '<button class="btn-round" data-go="#/" aria-label="Về trang chủ">←</button>' : ''}
+          <h1 class="ttitle"><span>👥</span> Ai đang chơi nào? <small>Chạm vào tên của bạn để bắt đầu</small></h1>
         </header>
         <div class="who-grid">
           ${ps.map((p) => `
-            <div class="who-card${p.active ? ' active' : ''}">
+            <div class="who-card${p.active && isPicked() ? ' active' : ''}">
               <button class="who-pick" data-act="pick" data-id="${p.id}">
                 <span class="avatar xxl">${K.avatarHtml(p.avatar)}</span>
                 <b>${p.name ? K.esc(p.name) : 'Bé yêu'}</b>
@@ -636,7 +636,7 @@
       K.fx.toast('Đã tải file sao lưu 💾');
     });
     m.querySelector('[data-del]').addEventListener('click', () => {
-      if (window.confirm(`Xóa hồ sơ "${p.name || 'Bé yêu'}"? Toàn bộ sao, sticker và huy hiệu của bé sẽ mất (trừ khi đã sao lưu).`)) {
+      if (window.confirm(`Xóa hồ sơ "${p.name || 'Bé yêu'}"? Toàn bộ sao, sticker và huy hiệu sẽ mất (trừ khi đã sao lưu).`)) {
         K.store.deleteProfile(id);
         m.close();
         route();
@@ -835,7 +835,7 @@
 
   K.store.touchDay();
   // Nhiều hồ sơ: hỏi "Ai đang chơi?" mỗi lần mở app
-  if (K.store.profiles().filter((p) => p.welcomed).length > 1 && !isPicked() && (!location.hash || location.hash === '#/' || location.hash === '#')) {
+  if (K.store.profiles().filter((p) => p.welcomed).length > 1 && !isPicked()) {
     history.replaceState(null, '', '#/who');
   }
   route();

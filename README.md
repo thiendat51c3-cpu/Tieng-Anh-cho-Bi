@@ -20,7 +20,7 @@ Web app học tiếng Anh cơ bản cho trẻ em qua các trò chơi vui nhộn.
   - 🎯 3 nhiệm vụ mỗi ngày, hoàn thành cả 3 nhận hộp quà bí mật
   - 🎁 Hộp quà & **bộ sưu tập 48 sticker** (thường, hiếm, siêu hiếm); mở bằng xu hoặc quà miễn phí khi lên cấp
   - Sao (tối đa 3 sao mỗi trò), xu 🪙, cấp độ, 11 huy hiệu, chuỗi ngày học, sổ từ vựng
-- **Nhiều hồ sơ trên một thiết bị**: mỗi bé một hồ sơ riêng (tên, hình đại diện, sao, sticker, nhiệm vụ). Mở app là chọn "Ai đang chơi nào?".
+- **Hồ sơ gia đình tạo sẵn** (Bon, Bi, Bố, Mẹ): mỗi người một hồ sơ riêng (hình đại diện, sao, sticker, nhiệm vụ). Mỗi lần mở app là chọn "Ai đang chơi nào?", chạm vào tên là vào chơi, không cần mật khẩu. Đổi danh sách tại `K.FAMILY` trong `js/data.js`.
 - **Sao lưu & khôi phục**: tải file sao lưu để giữ tiến trình khi đổi máy hoặc bị xóa dữ liệu trình duyệt; khôi phục từ file có kiểm tra và làm sạch dữ liệu. App nhắc sao lưu sau khi bé chơi nhiều.
 - **Hình đại diện tự vẽ**: capybara đội quýt, kỳ nhông axolotl, quái vật nhỏ, gấu trúc đỏ, cùng các emoji dễ thương.
 - Phát âm bằng giọng đọc của trình duyệt (Web Speech API), có chế độ đọc chậm. Âm thanh hiệu ứng tạo bằng Web Audio, không cần file.

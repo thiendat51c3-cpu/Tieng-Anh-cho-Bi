@@ -231,6 +231,14 @@
   K.AVATARS = ['capy', 'axolotl', 'monster', 'redpanda', '🦊', '🐼', '🐯', '🐸', '🐵', '🦄', '🐰', '🐻'];
   K.avatarHtml = (a) => K.AVATAR_SVG[a] || K.esc(a);
 
+  // Gia đình: các hồ sơ được tạo sẵn ở lần mở app đầu tiên trên mỗi thiết bị (sửa tên/hình ở đây nếu cần)
+  K.FAMILY = [
+    { name: 'Bon', avatar: 'capy' },
+    { name: 'Bi', avatar: 'axolotl' },
+    { name: 'Bố', avatar: '🐻' },
+    { name: 'Mẹ', avatar: '🦄' },
+  ];
+
   K.PRAISE = ['Great job! 🎉', 'Tuyệt vời!', 'Excellent! ⭐', 'Giỏi quá!', 'Perfect! 🌟', 'Yay! 🥳', 'Đúng rồi!', 'Wow! 👏'];
   K.OOPS = ['Thử lại nhé! 💪', 'Try again!', 'Gần đúng rồi!', 'Cố lên nào!', 'Oops! 🙈'];
 })();
