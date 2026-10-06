@@ -65,6 +65,12 @@ Luật này chỉ cho đọc và ghi đúng từng hồ sơ khi biết "mã gia 
 
 > `apiKey` và `projectId` không phải bí mật: mọi trang web dùng Firebase đều để lộ hai giá trị này. Bảo vệ nằm ở luật ở Phần 3 và ở **mã gia đình**.
 
+## Phần 5b. Nhúng sẵn mã gia đình (đang dùng cho nhà mình)
+
+Sau khi đã tạo mã gia đình ở một máy, bạn có thể dán mã đó vào `js/cloud-config.js` (dòng `familyCode`). Khi đó **mọi thiết bị mở app đều tự đồng bộ ngay**, kể cả máy mới hay trình duyệt mới, không phải nhập mã hay mở link gì cả. Các nút tạo mã, nhập mã, link kết nối sẽ tự ẩn đi.
+
+Đánh đổi: file cấu hình nằm công khai trên GitHub nên ai tìm ra repo cũng đọc được mã. Dữ liệu chỉ là sao, xu, sticker. Nếu lo bị phá, bạn đổi `familyCode` thành một mã mới (20 ký tự chữ thường a-z trừ i, l, o và số 2-9). Dữ liệu cũ vẫn còn trên mạng dưới mã cũ, còn thiết bị sẽ đẩy dữ liệu hiện có lên mã mới ở lần mở đầu tiên. Nhớ tải file sao lưu định kỳ để có bản dự phòng.
+
 ## Phần 6. Dùng
 
 **Máy đầu tiên** (máy bé đã chơi nhiều nhất):

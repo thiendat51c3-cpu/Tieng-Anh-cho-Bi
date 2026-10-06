@@ -730,6 +730,12 @@
       return `<hr><div class="cloud-box"><b>☁️ Đồng bộ đám mây</b>
         <p class="note-ok">Chưa được bật. Xem file <b>HUONG-DAN-DONG-BO.md</b> để bật (cần tạo dự án Firebase miễn phí, khoảng 10 phút).</p></div>`;
     }
+    if (K.cloud.fixed()) {
+      return `<hr><div class="cloud-box"><b>☁️ Đồng bộ tự động đã bật</b>
+        <p class="note-ok">Mọi thiết bị mở app này đều tự đồng bộ tiến độ cả nhà khi có mạng. Không cần nhập mã hay làm gì thêm.</p>
+        <div class="cloud-msg" data-cloud-msg aria-live="polite">${cloudStatusText()}</div>
+        <button class="btn" data-cloud-sync style="--c:#22c55e">🔄 Đồng bộ ngay</button></div>`;
+    }
     if (!K.cloud.linked()) {
       return `<hr><div class="cloud-box"><b>☁️ Đồng bộ đám mây</b>
         <p class="note-ok">Lưu tiến độ lên mạng, dùng được trên mọi thiết bị. Mỗi lần chơi có mạng, app tự lưu.</p>
@@ -1010,6 +1016,7 @@
 
   /* ---------- Link kết nối gia đình: #/join/<mã> ---------- */
   async function handleJoin(raw) {
+    if (K.cloud.fixed()) { K.fx.toast('☁️ Thiết bị này đã tự động đồng bộ rồi'); return; }
     if (!K.cloud.enabled()) { K.fx.toast('Đồng bộ chưa được bật trên app này.'); return; }
     const code = K.cloud.normalizeCode(raw);
     if (K.cloud.linked() && K.cloud.rawCode() === code) { K.fx.toast('☁️ Thiết bị này đã được kết nối rồi'); return; }

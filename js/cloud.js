@@ -171,6 +171,12 @@
     return Array.from(bytes, (b) => ALPHABET[b % ALPHABET.length]).join('');
   }
 
+  // Mã gia đình cố định trong cấu hình: mọi thiết bị tự liên kết, không cần nhập
+  const fixedCode = () => {
+    const c = normalizeCode(cfg().familyCode);
+    return CODE_RE.test(c) ? c : '';
+  };
+
   const reset = (code) => {
     const m = meta();
     m.code = code;
@@ -179,6 +185,9 @@
     m.last = 0;
     K.store.persist();
   };
+
+  // Có mã cố định: liên kết ngay khi tải trang (dữ liệu trên máy sẽ được gộp với dữ liệu trên mạng ở lần đồng bộ đầu)
+  if (enabled() && fixedCode() && meta().code !== fixedCode()) reset(fixedCode());
 
   K.cloud = {
     enabled,
@@ -195,9 +204,12 @@
     onStatus: null,
     onSynced: null,
 
+    fixed: () => enabled() && !!fixedCode(),
+
     // Tạo mã gia đình mới trên thiết bị này và đẩy tiến độ hiện có lên mạng
     async createFamily() {
       if (!enabled()) throw new Error('Chưa cấu hình Firebase');
+      if (fixedCode()) throw new Error('App đang dùng mã gia đình cố định.');
       const code = randomCode();
       reset(code);
       await syncAll();
@@ -213,6 +225,7 @@
     // Nhập mã gia đình của thiết bị khác: lấy tiến độ về và gộp với tiến độ trên máy này
     async joinFamily(input) {
       if (!enabled()) throw new Error('Chưa cấu hình Firebase');
+      if (fixedCode()) throw new Error('App đang dùng mã gia đình cố định.');
       const code = normalizeCode(input);
       if (!CODE_RE.test(code)) throw new Error('Mã chưa đúng. Mã gồm 20 chữ và số (ví dụ ABCD-EFGH-JKMN-PQRS-TUVW).');
       const prev = { ...meta(), base: { ...meta().base }, snap: { ...meta().snap } };
@@ -232,6 +245,7 @@
     },
 
     unlink() {
+      if (fixedCode()) return;
       clearTimeout(timer);
       reset('');
       setStatus('off');
