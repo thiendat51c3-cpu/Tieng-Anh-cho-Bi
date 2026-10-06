@@ -83,7 +83,7 @@
       words: [
         W('January', 'tháng Một'), W('February', 'tháng Hai'), W('March', 'tháng Ba'), W('April', 'tháng Tư'),
         W('birthday', 'ngày sinh nhật', '🎂'), W('party', 'buổi tiệc', '🎉'), W('chips', 'khoai tây rán', '🍟'), W('grapes', 'quả nho', '🍇'),
-        W('jam', 'mứt', '🍓'), W('juice', 'nước ép', '🧃'), W('lemonade', 'nước chanh', '🍋'), W('water', 'nước', '💧'),
+        W('jam', 'mứt'), W('juice', 'nước ép', '🧃'), W('lemonade', 'nước chanh', '🍋'), W('water', 'nước', '💧'),
       ],
       structures: [["When's your birthday?", "It's in …"], ['What do you want to eat / drink?', 'I want …']],
       sentences: [
@@ -116,7 +116,7 @@
       words: [
         W('city', 'thành phố', '🏙️'), W('town', 'thị trấn', '🏘️'), W('village', 'ngôi làng', '🏡'), W('mountains', 'những dãy núi', '⛰️'),
         W('building', 'toà nhà', '🏢'), W('computer room', 'phòng máy tính', '💻'), W('garden', 'vườn', '🌷'), W('playground', 'sân chơi', '🎠'),
-        W('school garden', 'vườn trường', '🌻'),
+        W('school garden', 'vườn trường'),
       ],
       structures: [["Where's your school?", "It's in the …"], ['How many … are there at your school?', 'There is / are …']],
       sentences: [
@@ -131,8 +131,8 @@
       id: 'u7', unit: 'Unit 7', book: 1, en: 'Our timetables', vi: 'Thời khoá biểu của chúng em', icon: '📚', color: '#6366f1',
       theme: 'Em và trường học',
       words: [
-        W('subject', 'môn học'), W('art', 'môn Mĩ thuật', '🖼️'), W('English', 'môn Tiếng Anh', '🔤'), W('history and geography', 'môn Lịch sử và Địa lí', '🗺️'),
-        W('maths', 'môn Toán', '➗'), W('music', 'môn Âm nhạc', '🎵'), W('science', 'môn Khoa học', '🔬'), W('Vietnamese', 'môn Tiếng Việt', '📕'),
+        W('subject', 'môn học'), W('art', 'môn Mĩ thuật'), W('English', 'môn Tiếng Anh'), W('history and geography', 'môn Lịch sử và Địa lí'),
+        W('maths', 'môn Toán'), W('music', 'môn Âm nhạc'), W('science', 'môn Khoa học'), W('Vietnamese', 'môn Tiếng Việt'),
       ],
       structures: [['What subjects do you have today?', 'I have …'], ['When do you have …?', 'I have it on …']],
       sentences: [
@@ -148,8 +148,8 @@
       id: 'u8', unit: 'Unit 8', book: 1, en: 'My favourite subjects', vi: 'Môn học yêu thích của em', icon: '⭐', color: '#f97316',
       theme: 'Em và trường học',
       words: [
-        W('favourite', 'yêu thích'), W('IT', 'môn Tin học', '🖥️'), W('PE', 'môn Thể dục', '🏀'), W('English teacher', 'giáo viên Tiếng Anh', '👩‍🏫'),
-        W('maths teacher', 'giáo viên Toán', '👨‍🏫'), W('painter', 'hoạ sĩ', '🖌️'), W('because', 'bởi vì'), W('why', 'tại sao'),
+        W('favourite', 'yêu thích'), W('IT', 'môn Tin học'), W('PE', 'môn Thể dục'), W('English teacher', 'giáo viên Tiếng Anh'),
+        W('maths teacher', 'giáo viên Toán'), W('painter', 'hoạ sĩ', '🧑‍🎨'), W('because', 'bởi vì'), W('why', 'tại sao'),
       ],
       structures: [["What's your favourite subject?", "It's …"], ['Why do you like …?', 'Because I want to be …']],
       sentences: [
@@ -196,7 +196,7 @@
       id: 'u11', unit: 'Unit 11', book: 2, en: 'My home', vi: 'Nhà của em', icon: '🏠', color: '#ec4899',
       theme: 'Em và gia đình',
       words: [
-        W('road', 'con đường', '🛣️'), W('street', 'phố, đường phố'), W('live', 'sống', '🏠'), W('big', 'to, lớn'), W('busy', 'bận rộn, nhộn nhịp'),
+        W('road', 'con đường', '🛣️'), W('street', 'phố, đường phố'), W('live', 'sống'), W('big', 'to, lớn'), W('busy', 'bận rộn, nhộn nhịp'),
         W('noisy', 'ồn ào', '🔊'), W('quiet', 'yên tĩnh', '🤫'), W('in', 'trong, ở'), W('at', 'ở, tại'),
       ],
       structures: [['Where do you live?', 'I live …'], ["What's the … like?", "It's …"]],
@@ -228,7 +228,7 @@
       theme: 'Em và gia đình',
       words: [
         W('tall', 'cao'), W('short', 'thấp, ngắn'), W('slim', 'mảnh mai'), W('big', 'to, lớn'), W('eyes', 'đôi mắt', '👀'), W('face', 'khuôn mặt', '🙂'),
-        W('hair', 'tóc', '💇'), W('long', 'dài'), W('round', 'tròn'),
+        W('hair', 'tóc'), W('long', 'dài'), W('round', 'tròn'),
       ],
       structures: [['What does he / she look like?', "He's / She's …"], ['…', 'He / She has …']],
       sentences: [
@@ -244,7 +244,7 @@
       words: [
         W('in the morning', 'vào buổi sáng', '🌅'), W('at noon', 'vào buổi trưa', '🌞'), W('in the afternoon', 'vào buổi chiều', '🌤️'),
         W('in the evening', 'vào buổi tối', '🌆'), W('watch TV', 'xem ti vi', '📺'), W('clean the floor', 'lau sàn nhà', '🧹'),
-        W('help with the cooking', 'giúp nấu ăn', '🍳'), W('wash the clothes', 'giặt quần áo', '🧼'), W('wash the dishes', 'rửa bát đĩa', '🍽️'),
+        W('help with the cooking', 'giúp nấu ăn', '🍳'), W('wash the clothes', 'giặt quần áo'), W('wash the dishes', 'rửa bát đĩa'),
         W('morning', 'buổi sáng'), W('noon', 'buổi trưa'), W('afternoon', 'buổi chiều'), W('evening', 'buổi tối'),
       ],
       structures: [['When do you watch TV?', 'I watch TV …'], ['What do you do in the morning?', 'I …']],
@@ -262,7 +262,7 @@
       theme: 'Em và gia đình',
       words: [
         W('cinema', 'rạp chiếu phim', '🎬'), W('shopping centre', 'trung tâm mua sắm', '🛍️'), W('sports centre', 'trung tâm thể thao', '🏟️'),
-        W('swimming pool', 'bể bơi', '💦'), W('cook meals', 'nấu các bữa ăn', '🍲'), W('do yoga', 'tập yoga', '🧘'), W('play tennis', 'chơi quần vợt', '🎾'),
+        W('swimming pool', 'bể bơi'), W('cook meals', 'nấu các bữa ăn', '🍲'), W('do yoga', 'tập yoga', '🧘'), W('play tennis', 'chơi quần vợt', '🎾'),
         W('watch films', 'xem phim', '🍿'), W('film', 'bộ phim', '🎞️'), W('television', 'ti vi, truyền hình'),
       ],
       structures: [['Where does he / she go on Saturdays?', "He / She goes to the …"], ['What does he / she do on Sundays?', 'He / She …']],
@@ -280,7 +280,7 @@
       theme: 'Em và thế giới xung quanh', phonicsTitle: 'Trọng âm',
       words: [
         W('weather', 'thời tiết', '⛅'), W('sunny', 'có nắng', '☀️'), W('rainy', 'có mưa', '🌧️'), W('cloudy', 'có mây', '☁️'), W('windy', 'có gió', '💨'),
-        W('bakery', 'hiệu bánh mì', '🥖'), W('bookshop', 'hiệu sách', '📚'), W('food stall', 'quầy hàng thực phẩm', '🍜'), W('water park', 'công viên nước', '🌊'),
+        W('bakery', 'hiệu bánh mì', '🥖'), W('bookshop', 'hiệu sách', '📚'), W('food stall', 'quầy hàng thực phẩm', '🍜'), W('water park', 'công viên nước'),
       ],
       structures: [['What was the weather like last weekend?', 'It was …'], ['Do you want to go to the …?', "Great! Let's go. / Sorry, I can't."]],
       sentences: [
@@ -294,8 +294,8 @@
       id: 'u17', unit: 'Unit 17', book: 2, en: 'In the city', vi: 'Trong thành phố', icon: '🚦', color: '#06b6d4',
       theme: 'Em và thế giới xung quanh', phonicsTitle: 'Trọng âm',
       words: [
-        W('road sign', 'biển chỉ đường', '🚧'), W('stop', 'dừng lại', '🛑'), W('go straight', 'đi thẳng', '⬆️'), W('turn left', 'rẽ trái', '⬅️'),
-        W('turn right', 'rẽ phải', '➡️'), W('turn round', 'quay lại', '🔄'), W('left', 'bên trái', '👈'), W('right', 'bên phải', '👉'),
+        W('road sign', 'biển chỉ đường', '🚸'), W('stop', 'dừng lại', '🛑'), W('go straight', 'đi thẳng', '⬆️'), W('turn left', 'rẽ trái', '⬅️'),
+        W('turn right', 'rẽ phải', '➡️'), W('turn round', 'quay lại', '🔄'), W('left', 'bên trái'), W('right', 'bên phải'),
         W('turn', 'rẽ, quay'), W('get (to)', 'đến (địa điểm)'),
       ],
       structures: [['What does it say?', "It says '…'."], ['How can I get to the …?', 'Go straight / Turn left / Turn right …']],
@@ -311,7 +311,7 @@
       theme: 'Em và thế giới xung quanh', phonicsTitle: 'Trọng âm',
       words: [
         W('behind', 'đằng sau'), W('between', 'ở giữa'), W('near', 'ở gần'), W('opposite', 'đối diện'), W('gift shop', 'cửa hàng quà tặng', '🎁'),
-        W('skirt', 'váy', '👗'), W('T-shirt', 'áo thun', '👕'), W('dong', 'đồng (tiền Việt Nam)', '💰'), W('thousand', 'nghìn'), W('supermarket', 'siêu thị', '🛒'),
+        W('skirt', 'váy', '👗'), W('T-shirt', 'áo thun', '👕'), W('dong', 'đồng (tiền Việt Nam)'), W('thousand', 'nghìn'), W('supermarket', 'siêu thị', '🛒'),
       ],
       structures: [["Where's the bookshop?", "It's …"], ['How much is the …?', "It's …"]],
       sentences: [
@@ -327,7 +327,7 @@
       theme: 'Em và thế giới xung quanh', phonicsTitle: 'Trọng âm',
       words: [
         W('crocodile', 'cá sấu', '🐊'), W('giraffe', 'hươu cao cổ', '🦒'), W('hippo', 'hà mã', '🦛'), W('lion', 'sư tử', '🦁'), W('dance beautifully', 'nhảy múa đẹp đẽ', '💃'),
-        W('roar loudly', 'gầm to', '📢'), W('run quickly', 'chạy nhanh', '🏃'), W('sing merrily', 'hát vui vẻ', '🎤'), W('burrow', 'hang (cầy, thỏ)', '🕳️'), W('den', 'hang, ổ (sư tử)'),
+        W('roar loudly', 'gầm to'), W('run quickly', 'chạy nhanh', '🏃'), W('sing merrily', 'hát vui vẻ', '🎤'), W('burrow', 'hang (cầy, thỏ)', '🕳️'), W('den', 'hang, ổ (sư tử)'),
       ],
       structures: [['What are these animals?', "They're …"], ['Why do you like …?', 'Because they …']],
       sentences: [
@@ -342,9 +342,9 @@
       id: 'u20', unit: 'Unit 20', book: 2, en: 'At summer camp', vi: 'Ở trại hè', icon: '🏕️', color: '#f97316',
       theme: 'Em và thế giới xung quanh', phonicsTitle: 'Trọng âm',
       words: [
-        W('campfire', 'lửa trại', '🔥'), W('tent', 'lều, trại', '⛺'), W('photo', 'bức ảnh', '📷'), W('story', 'câu chuyện'), W('build a campfire', 'đốt lửa trại', '🪓'),
-        W('dance around the campfire', 'nhảy múa quanh lửa trại', '🕺'), W('play card games', 'chơi bài', '🃏'), W('play tug of war', 'chơi kéo co'),
-        W('put up a tent', 'dựng lều', '🏕️'), W('sing songs', 'hát các bài hát', '🎶'), W('take a photo', 'chụp ảnh', '📸'), W('tell a story', 'kể chuyện', '🧙'),
+        W('campfire', 'lửa trại', '🔥'), W('tent', 'lều, trại', '⛺'), W('photo', 'bức ảnh', '📷'), W('story', 'câu chuyện'), W('build a campfire', 'đốt lửa trại'),
+        W('dance around the campfire', 'nhảy múa quanh lửa trại'), W('play card games', 'chơi bài', '🃏'), W('play tug of war', 'chơi kéo co'),
+        W('put up a tent', 'dựng lều', '🏕️'), W('sing songs', 'hát các bài hát', '🎶'), W('take a photo', 'chụp ảnh', '📸'), W('tell a story', 'kể chuyện'),
       ],
       structures: [["What's he / she doing?", "He's / She's …"], ['What are they doing?', "They're …"]],
       sentences: [

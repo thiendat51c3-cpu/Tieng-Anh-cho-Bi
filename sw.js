@@ -1,5 +1,5 @@
 /* Service worker: ưu tiên mạng, rơi về bộ nhớ đệm khi offline để bé học mọi lúc */
-const CACHE = 'be-vui-hoc-tieng-anh-v6';
+const CACHE = 'be-vui-hoc-tieng-anh-v7';
 const ASSETS = [
   './', 'index.html', 'css/style.css', 'icon.svg', 'manifest.webmanifest',
   'js/util.js', 'js/data.js', 'js/curriculum.js', 'js/store.js', 'js/cloud-config.js', 'js/cloud.js', 'js/audio.js', 'js/fx.js',
