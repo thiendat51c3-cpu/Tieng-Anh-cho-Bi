@@ -1,0 +1,15 @@
+{
+  "name": "Bé Vui Học Tiếng Anh",
+  "short_name": "Học Tiếng Anh",
+  "description": "Học tiếng Anh cơ bản cho trẻ em qua các trò chơi vui nhộn",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#bfe9ff",
+  "theme_color": "#7c5cff",
+  "lang": "vi",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
