@@ -163,16 +163,18 @@
   // Sticker để sưu tầm (mở bằng hộp quà)
   const stk = (rarity, list) => list.split(' ').map((e) => ({ id: e, e, rarity }));
   K.STICKERS = [
-    ...stk('common', '🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🐔 🐧 🐦 🐤 🦆 🦉 🦄 🐝 🦋 🐌 🐞 🐢 🐙 🐠 🐬'),
-    ...stk('rare', '🦖 🦕 🐳 🦈 🦜 🦒 🦔 🐲 🦚 🦢 🦞 🐊'),
-    ...stk('epic', '🌈 🚀 👑 🏆 💎 🛸'),
+    ...stk('common', '🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🐔 🐧 🐦 🐤 🦆 🦉 🦄 🐝 🦋 🐌 🐞 🐢 🐙 🐠 🐬 🐴 🦓 🐗 🐺 🦌 🐫 🦘 🦙 🐿️ 🐇 🐑 🐐 🦃 🦩 🐛 🦀 🦑 🐡 🍎 🍓 🍉 🍕 🍩 🍪 🧁 🍦 ⚽ 🏀 🎈 🎨'),
+    ...stk('rare', '🦖 🦕 🐳 🦈 🦜 🦒 🦔 🐲 🦚 🦢 🦞 🐊 🐘 🦏 🦛 🐅 🐆 🦍 🐋 🦅 🦇 🐍 🦎 🐉'),
+    ...stk('epic', '🌈 🚀 👑 🏆 💎 🛸 🔮 🌋 🏰 🪐 ☄️ 🎆'),
+    ...stk('legend', '🧙 🧚 🧜 🧞 🦸 🦹 🧝 🥇'),
   ];
   // Số sao hiển thị trên sticker: càng nhiều sao càng hiếm (thường 1-3 sao; anime 1-4 sao)
-  K.starCount = (r) => ({ common: 1, rare: 2, epic: 3, an1: 1, an2: 2, an3: 3, an4: 4 }[r] || 1);
+  K.starCount = (r) => ({ common: 1, rare: 2, epic: 3, legend: 4, an1: 1, an2: 2, an3: 3, an4: 4 }[r] || 1);
   K.RARITY = {
-    common: { name: 'Thường', weight: 80, color: '#64748b' },
-    rare: { name: 'Hiếm ⭐', weight: 17, color: '#3b82f6' },
-    epic: { name: 'Siêu hiếm 🌟', weight: 3, color: '#f59e0b' },
+    common: { name: 'Thường', weight: 76, color: '#64748b' },
+    rare: { name: 'Hiếm ⭐', weight: 18, color: '#3b82f6' },
+    epic: { name: 'Siêu hiếm 🌟', weight: 5, color: '#f59e0b' },
+    legend: { name: 'Huyền thoại 👑', weight: 1, color: '#ef4444' },
   };
 
   // Hình đại diện: các nhân vật tự vẽ (SVG) + emoji

@@ -562,6 +562,8 @@ button.chest { animation: glowGold 1.4s ease-in-out infinite; font-size: 1.15rem
 .sname { font-weight: 800; font-size: 1.15rem; text-align: center; }
 .anime-grid { margin: 10px 0 16px; }
 .anime-panel { margin-top: 10px; background: linear-gradient(135deg, #fdf2f8, #eef2ff); }
+.sticker.legend { border-color: #f87171; background: linear-gradient(145deg, #fff1f2, #fee2e2); box-shadow: 0 4px 0 #b91c1c, 0 0 18px rgba(239, 68, 68, 0.8); }
+.reveal.legend .sticker-big { filter: drop-shadow(0 0 26px #ef4444); }
 .sticker.locked { background: rgba(255, 255, 255, 0.5); border-style: dashed; color: #c9bfe6; box-shadow: none; }
 .sticker.locked b { font-size: 1.8rem; font-weight: 800; }
 .stars { position: absolute; left: 0; right: 0; bottom: 1px; text-align: center; font-size: 0.62rem; line-height: 1; letter-spacing: -1px; color: var(--sc, #f59e0b); text-shadow: 0 1px 0 #fff, 0 0 3px #fff; pointer-events: none; }
