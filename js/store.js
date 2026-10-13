@@ -51,6 +51,7 @@
   ];
   K.MISSIONS = MISSIONS;
   K.GIFT_COST = 80;
+  K.ANIME_COST = 300; // Hộp quà Anime: mỗi lần mở trừ 300 xu
 
   K.BADGES = BADGES;
 
@@ -447,6 +448,22 @@
         if ((roll -= K.RARITY[k].weight) < 0) { rarity = k; break; }
       }
       const pool = K.STICKERS.filter((x) => x.rarity === rarity);
+      const sticker = pool[Math.floor(Math.random() * pool.length)];
+      const isNew = !state.stickers[sticker.id];
+      state.stickers[sticker.id] = (state.stickers[sticker.id] || 0) + 1;
+      this.save();
+      return { sticker, isNew };
+    },
+
+    // Hộp quà Anime: trả 300 xu, nhận 1 sticker anime siêu siêu hiếm (ưu tiên sticker bé chưa có)
+    canOpenAnime() { return state.coins >= K.ANIME_COST; },
+    openAnime() {
+      if (state.coins < K.ANIME_COST) return null;
+      const all = K.STICKERS.filter((x) => x.rarity === 'mythic');
+      if (!all.length) return null;
+      state.coins -= K.ANIME_COST;
+      const fresh = all.filter((x) => !state.stickers[x.id]);
+      const pool = fresh.length ? fresh : all;
       const sticker = pool[Math.floor(Math.random() * pool.length)];
       const isNew = !state.stickers[sticker.id];
       state.stickers[sticker.id] = (state.stickers[sticker.id] || 0) + 1;
