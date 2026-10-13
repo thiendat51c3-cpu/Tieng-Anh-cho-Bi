@@ -168,9 +168,9 @@
     ...stk('epic', '🌈 🚀 👑 🏆 💎 🛸'),
   ];
   K.RARITY = {
-    common: { name: 'Thường', weight: 70, color: '#64748b' },
-    rare: { name: 'Hiếm ⭐', weight: 25, color: '#3b82f6' },
-    epic: { name: 'Siêu hiếm 🌟', weight: 5, color: '#f59e0b' },
+    common: { name: 'Thường', weight: 80, color: '#64748b' },
+    rare: { name: 'Hiếm ⭐', weight: 17, color: '#3b82f6' },
+    epic: { name: 'Siêu hiếm 🌟', weight: 3, color: '#f59e0b' },
   };
 
   // Hình đại diện: các nhân vật tự vẽ (SVG) + emoji

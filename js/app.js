@@ -539,10 +539,13 @@
         : '<div class="sticker locked" aria-label="Chưa có"><b>?</b></div>';
     };
     const tab = stickerTab;
-    const normalAll = K.STICKERS.filter((x) => x.rarity !== 'mythic').length;
-    const normalOwned = K.STICKERS.filter((x) => x.rarity !== 'mythic' && s.stickers[x.id]).length;
-    const animeAll = K.STICKERS.filter((x) => x.rarity === 'mythic').length;
-    const animeOwned = K.STICKERS.filter((x) => x.rarity === 'mythic' && s.stickers[x.id]).length;
+    const aTiers = Object.values(K.RARITY).filter((r) => r.animeWeight > 0);
+    const aTotal = aTiers.reduce((n, r) => n + r.animeWeight, 0);
+    const animeOdds = aTiers.map((r) => `<span style="--rc:${r.color}">● ${r.name} ${Math.round((r.animeWeight / aTotal) * 100)}%</span>`).join('');
+    const normalAll = K.STICKERS.filter((x) => !x.anime).length;
+    const normalOwned = K.STICKERS.filter((x) => !x.anime && s.stickers[x.id]).length;
+    const animeAll = K.STICKERS.filter((x) => x.anime).length;
+    const animeOwned = K.STICKERS.filter((x) => x.anime && s.stickers[x.id]).length;
     app.innerHTML = `
       <section class="screen stickers">
         <header class="topbar">
@@ -574,9 +577,10 @@
           <button class="st-tab${tab === 'anime' ? ' on' : ''}" data-act="sttab" data-tab="anime" role="tab">✨ Anime <small>${animeOwned}/${animeAll}</small></button>
         </div>
         ${tab === 'anime'
-          ? `<div class="sticker-grid anime-grid">${K.STICKERS.filter((st) => st.rarity === 'mythic').map(stickerCell).join('')}</div>`
+          ? `<div class="legend">${animeOdds}</div>
+        <div class="sticker-grid anime-grid">${K.STICKERS.filter((st) => st.anime).sort((a, b) => K.RARITY[a.rarity].animeWeight - K.RARITY[b.rarity].animeWeight).map(stickerCell).join('')}</div>`
           : `<div class="legend">${Object.values(K.RARITY).filter((r) => r.weight > 0).map((r) => `<span style="--rc:${r.color}">● ${r.name}</span>`).join('')}</div>
-        <div class="sticker-grid">${K.STICKERS.filter((st) => st.rarity !== 'mythic').map(stickerCell).join('')}</div>`}
+        <div class="sticker-grid">${K.STICKERS.filter((st) => !st.anime).map(stickerCell).join('')}</div>`}
       </section>`;
   }
 
@@ -602,7 +606,7 @@
           <button class="btn big" data-close style="--c:#22c55e">Tuyệt vời!</button>
         </div>`;
       K.audio.sfx('win');
-      K.fx.confetti(r.sticker.rarity === 'mythic' ? 320 : r.sticker.rarity === 'epic' ? 200 : r.sticker.rarity === 'rare' ? 140 : 80);
+      K.fx.confetti(r.sticker.rarity === 'an4' ? 420 : r.sticker.rarity === 'an3' ? 320 : r.sticker.anime ? 240 : r.sticker.rarity === 'epic' ? 200 : r.sticker.rarity === 'rare' ? 140 : 80);
       K.store.checkBadges().forEach((b) => K.fx.toast(`${b.icon} Huy hiệu mới: ${b.name}`));
     }, 1400);
     m.addEventListener('click', (e) => {
