@@ -527,6 +527,7 @@
   }
 
   /* ---------- Sticker & hộp quà ---------- */
+  let stickerTab = 'normal';
   function renderStickers() {
     const s = K.store.state;
     const free = s.gifts > 0;
@@ -537,6 +538,9 @@
         ? `<button class="sticker ${st.rarity}" data-act="pet" aria-label="Sticker ${st.name || st.e}">${st.e}${n > 1 ? `<i class="cnt">x${n}</i>` : ''}</button>`
         : '<div class="sticker locked" aria-label="Chưa có"><b>?</b></div>';
     };
+    const tab = stickerTab;
+    const normalAll = K.STICKERS.filter((x) => x.rarity !== 'mythic').length;
+    const normalOwned = K.STICKERS.filter((x) => x.rarity !== 'mythic' && s.stickers[x.id]).length;
     const animeAll = K.STICKERS.filter((x) => x.rarity === 'mythic').length;
     const animeOwned = K.STICKERS.filter((x) => x.rarity === 'mythic' && s.stickers[x.id]).length;
     app.innerHTML = `
@@ -565,10 +569,14 @@
           </div>
         </div>
 
-        <div class="sticker-grid anime-grid">${K.STICKERS.filter((st) => st.rarity === 'mythic').map(stickerCell).join('')}</div>
-
-        <div class="legend">${Object.values(K.RARITY).filter((r) => r.weight > 0).map((r) => `<span style="--rc:${r.color}">● ${r.name}</span>`).join('')}</div>
-        <div class="sticker-grid">${K.STICKERS.filter((st) => st.rarity !== 'mythic').map(stickerCell).join('')}</div>
+        <div class="st-tabs" role="tablist">
+          <button class="st-tab${tab === 'normal' ? ' on' : ''}" data-act="sttab" data-tab="normal" role="tab">🐶 Thường <small>${normalOwned}/${normalAll}</small></button>
+          <button class="st-tab${tab === 'anime' ? ' on' : ''}" data-act="sttab" data-tab="anime" role="tab">✨ Anime <small>${animeOwned}/${animeAll}</small></button>
+        </div>
+        ${tab === 'anime'
+          ? `<div class="sticker-grid anime-grid">${K.STICKERS.filter((st) => st.rarity === 'mythic').map(stickerCell).join('')}</div>`
+          : `<div class="legend">${Object.values(K.RARITY).filter((r) => r.weight > 0).map((r) => `<span style="--rc:${r.color}">● ${r.name}</span>`).join('')}</div>
+        <div class="sticker-grid">${K.STICKERS.filter((st) => st.rarity !== 'mythic').map(stickerCell).join('')}</div>`}
       </section>`;
   }
 
@@ -580,6 +588,7 @@
     }
     const r = anime ? K.store.openAnime() : K.store.openGift();
     if (!r) return;
+    stickerTab = anime ? 'anime' : 'normal';
     const rar = K.RARITY[r.sticker.rarity];
     const m = modal(`<div class="gift-open"><div class="gift-shake">${anime ? '✨' : '🎁'}</div><p>Đang mở quà...</p></div>`, false);
     K.audio.sfx('flip');
@@ -998,6 +1007,7 @@
     }
     else if (act.dataset.act === 'gift') openGiftModal();
     else if (act.dataset.act === 'agift') openGiftModal('anime');
+    else if (act.dataset.act === 'sttab') { stickerTab = act.dataset.tab === 'anime' ? 'anime' : 'normal'; renderStickers(); }
     else if (act.dataset.act === 'claim') {
       const n = K.store.claimMission(act.dataset.id);
       if (n) {

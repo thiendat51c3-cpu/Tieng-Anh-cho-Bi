@@ -554,6 +554,10 @@ button.chest { animation: glowGold 1.4s ease-in-out infinite; font-size: 1.15rem
 .reveal.mythic .sticker-big { filter: drop-shadow(0 0 26px #f472b6); }
 .sname { font-weight: 800; font-size: 1.15rem; text-align: center; }
 .anime-grid { margin: 10px 0 16px; }
+.st-tabs { display: flex; gap: 8px; margin: 12px 0 6px; }
+.st-tab { flex: 1; padding: 10px 6px; border: 3px solid #d9d0f5; border-radius: 16px; background: #fff; font: inherit; font-weight: 800; color: var(--ink); }
+.st-tab small { display: block; font-size: 0.75rem; opacity: 0.7; }
+.st-tab.on { border-color: #ec4899; background: linear-gradient(145deg, #ffe4f3, #e0e7ff); box-shadow: 0 3px 0 #db2777; }
 .anime-panel { margin-top: 10px; background: linear-gradient(135deg, #fdf2f8, #eef2ff); }
 .sticker.locked { background: rgba(255, 255, 255, 0.5); border-style: dashed; color: #c9bfe6; box-shadow: none; }
 .sticker.locked b { font-size: 1.8rem; font-weight: 800; }

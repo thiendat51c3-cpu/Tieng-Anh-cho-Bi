@@ -51,7 +51,7 @@
   ];
   K.MISSIONS = MISSIONS;
   K.GIFT_COST = 80;
-  K.ANIME_COST = 300; // Hộp quà Anime: mỗi lần mở trừ 300 xu
+  K.ANIME_COST = 500; // Hộp quà Anime: mỗi lần mở trừ 500 xu
 
   K.BADGES = BADGES;
 
