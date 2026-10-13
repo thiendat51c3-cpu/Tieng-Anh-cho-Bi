@@ -533,9 +533,10 @@
     const can = K.store.canOpenGift();
     const stickerCell = (st) => {
       const n = s.stickers[st.id];
+      const stars = `<span class="stars" style="--sc:${K.RARITY[st.rarity].color}" aria-label="${K.starCount(st.rarity)} sao">${'★'.repeat(K.starCount(st.rarity))}</span>`;
       return n
-        ? `<button class="sticker ${st.rarity}" data-act="pet" aria-label="Sticker ${st.name || st.e}">${st.e}${n > 1 ? `<i class="cnt">x${n}</i>` : ''}</button>`
-        : '<div class="sticker locked" aria-label="Chưa có"><b>?</b></div>';
+        ? `<button class="sticker ${st.rarity}" data-act="pet" aria-label="Sticker ${st.name || st.e}">${st.e}${stars}${n > 1 ? `<i class="cnt">x${n}</i>` : ''}</button>`
+        : `<div class="sticker locked" aria-label="Chưa có"><b>?</b>${stars}</div>`;
     };
     const animeAll = K.STICKERS.filter((x) => x.anime).length;
     const animeOwned = K.STICKERS.filter((x) => x.anime && s.stickers[x.id]).length;
@@ -566,7 +567,7 @@
         </div>
 
         <div class="sticker-grid anime-grid">${K.STICKERS.filter((st) => st.anime).sort((x, y) => K.RARITY[x.rarity].animeWeight - K.RARITY[y.rarity].animeWeight).map(stickerCell).join('')}</div>
-        <div class="legend">${Object.values(K.RARITY).filter((r) => r.weight > 0).map((r) => `<span style="--rc:${r.color}">● ${r.name}</span>`).join('')}</div>
+        <div class="legend">${Object.keys(K.RARITY).filter((k) => K.RARITY[k].weight > 0).map((k) => `<span style="--rc:${K.RARITY[k].color}">${'★'.repeat(K.starCount(k))} ${K.RARITY[k].name}</span>`).join('')}</div>
         <div class="sticker-grid">${K.STICKERS.filter((st) => !st.anime).map(stickerCell).join('')}</div>
       </section>`;
   }
@@ -588,7 +589,7 @@
           <div class="sticker-big">${r.sticker.e}</div>
           <h2>${r.isNew ? 'Sticker mới! 🎉' : 'Bạn đã có sticker này rồi'}</h2>
           ${r.sticker.name ? `<div class="sname">${r.sticker.name}</div>` : ''}
-          <div class="rar" style="color:${rar.color}">${rar.name}</div>
+          <div class="rar" style="color:${rar.color}">${'★'.repeat(K.starCount(r.sticker.rarity))} ${rar.name}</div>
           <button class="btn big" data-close style="--c:#22c55e">Tuyệt vời!</button>
         </div>`;
       K.audio.sfx('win');
