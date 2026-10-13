@@ -28,13 +28,15 @@
   };
 
   // Hình minh hoạ của một từ: chấm màu, emoji, hoặc (nếu không có hình) nghĩa tiếng Việt
-  K.hasPicture = (w) => !!(w.e || w.c);
+  K.hasPicture = (w) => !!(w.e || w.c || (K.PICS && K.PICS[w.en]));
   K.visual = (w) =>
     w.c
       ? `<span class="swatch" style="--c:${w.c}"></span>`
       : w.e
         ? `<span class="emo">${w.e}</span>`
-        : `<span class="vi-card">${K.esc(w.vi)}</span>`;
+        : K.PICS && K.PICS[w.en]
+          ? `<span class="emo">${K.PICS[w.en]}</span>`
+          : `<span class="vi-card">${K.esc(w.vi)}</span>`;
 
   K.registerGame = (g) => {
     K.games[g.id] = g;

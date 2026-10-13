@@ -51,6 +51,7 @@
   ];
   K.MISSIONS = MISSIONS;
   K.GIFT_COST = 80;
+  K.ANIME_COST = 500; // Hộp quà Anime: mỗi lần mở trừ 500 xu
 
   K.BADGES = BADGES;
 
@@ -447,6 +448,28 @@
         if ((roll -= K.RARITY[k].weight) < 0) { rarity = k; break; }
       }
       const pool = K.STICKERS.filter((x) => x.rarity === rarity);
+      const sticker = pool[Math.floor(Math.random() * pool.length)];
+      const isNew = !state.stickers[sticker.id];
+      state.stickers[sticker.id] = (state.stickers[sticker.id] || 0) + 1;
+      this.save();
+      return { sticker, isNew };
+    },
+
+    // Hộp quà Anime: trả K.ANIME_COST xu, quay ra một bậc hiếm theo tỉ lệ (animeWeight), rồi chọn 1 nhân vật trong bậc đó
+    // (ưu tiên nhân vật bé chưa có trong bậc). Bậc càng hiếm càng khó trúng.
+    canOpenAnime() { return state.coins >= K.ANIME_COST; },
+    openAnime() {
+      if (state.coins < K.ANIME_COST) return null;
+      const tiers = Object.keys(K.RARITY).filter((k) => K.RARITY[k].animeWeight > 0 && K.STICKERS.some((x) => x.rarity === k));
+      if (!tiers.length) return null;
+      state.coins -= K.ANIME_COST;
+      const total = tiers.reduce((n, k) => n + K.RARITY[k].animeWeight, 0);
+      let roll = Math.random() * total;
+      let tier = tiers[0];
+      for (const k of tiers) { if ((roll -= K.RARITY[k].animeWeight) < 0) { tier = k; break; } }
+      const all = K.STICKERS.filter((x) => x.rarity === tier);
+      const fresh = all.filter((x) => !state.stickers[x.id]);
+      const pool = fresh.length ? fresh : all;
       const sticker = pool[Math.floor(Math.random() * pool.length)];
       const isNew = !state.stickers[sticker.id];
       state.stickers[sticker.id] = (state.stickers[sticker.id] || 0) + 1;

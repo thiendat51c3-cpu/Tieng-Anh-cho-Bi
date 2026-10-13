@@ -238,6 +238,7 @@ hr { border: 0; border-top: 2px dashed #e5defa; margin: 14px 0; width: 100%; }
   vertical-align: middle;
 }
 .emo { line-height: 1; }
+.art { width: 1em; height: 1em; display: inline-block; vertical-align: -0.12em; }
 
 /* ----- Đoán hình & Nghe chọn ----- */
 .q-card {
@@ -548,6 +549,19 @@ button.chest { animation: glowGold 1.4s ease-in-out infinite; font-size: 1.15rem
 }
 .sticker.rare { border-color: #60a5fa; background: #eff6ff; }
 .sticker.epic { border-color: #fbbf24; background: linear-gradient(145deg, #fff7d6, #ffe9a8); box-shadow: 0 4px 0 #e08a00, 0 0 14px rgba(251, 191, 36, 0.7); }
+.sticker svg, .sticker-big svg { width: 1em; height: 1em; display: block; }
+.sticker.an1 { border-color: #60a5fa; background: #eff6ff; }
+.sticker.an2 { border-color: #fbbf24; background: #fffbeb; box-shadow: 0 4px 0 #e08a00, 0 0 12px rgba(251, 191, 36, 0.6); }
+.sticker.an3 { border-color: #c084fc; background: #faf5ff; box-shadow: 0 4px 0 #7e22ce, 0 0 16px rgba(168, 85, 247, 0.75); }
+.sticker.an4 { border-color: #f472b6; background: linear-gradient(145deg, #ffe4f3, #fef9c3); box-shadow: 0 4px 0 #db2777, 0 0 20px rgba(236, 72, 153, 0.9); }
+.sticker.an1 svg, .sticker.an2 svg, .sticker.an3 svg, .sticker.an4 svg { border-radius: 14px; }
+.reveal.an1 .sticker-big { filter: drop-shadow(0 0 14px #60a5fa); }
+.reveal.an2 .sticker-big { filter: drop-shadow(0 0 18px #fbbf24); }
+.reveal.an3 .sticker-big { filter: drop-shadow(0 0 22px #a855f7); }
+.reveal.an4 .sticker-big { filter: drop-shadow(0 0 28px #f472b6); }
+.sname { font-weight: 800; font-size: 1.15rem; text-align: center; }
+.anime-grid { margin: 10px 0 16px; }
+.anime-panel { margin-top: 10px; background: linear-gradient(135deg, #fdf2f8, #eef2ff); }
 .sticker.locked { background: rgba(255, 255, 255, 0.5); border-style: dashed; color: #c9bfe6; box-shadow: none; }
 .sticker.locked b { font-size: 1.8rem; font-weight: 800; }
 .cnt { position: absolute; right: -4px; bottom: -4px; padding: 0 7px; border-radius: 99px; background: var(--primary); color: #fff; font-size: 0.8rem; font-style: normal; font-weight: 800; }

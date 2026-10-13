@@ -53,6 +53,8 @@ Link sẽ có dạng `https://<tên-người-dùng>.github.io/tieng-anh-tre-em/`
 ```
 index.html          Trang chính
 css/style.css       Giao diện
+js/pics.js          Hình minh hoạ tự vẽ (SVG): môn học, quốc kỳ, việc nhà...
+js/anime.js         100 sticker anime tự vẽ chia 4 bậc hiếm: Hiếm 60%, Siêu hiếm 28%, Cực hiếm 9%, Huyền thoại 3% (Hộp quà Anime, 500 xu mỗi lần)
 js/curriculum.js    Chương trình Tiếng Anh 4 (từ vựng, mẫu câu, câu mẫu từng unit)
 js/data.js          Chủ đề mở rộng, sticker, hình đại diện, hồ sơ gia đình
 js/store.js         Hồ sơ người chơi, lưu tiến trình, sao lưu, huy hiệu

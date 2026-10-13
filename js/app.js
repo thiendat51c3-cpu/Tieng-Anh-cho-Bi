@@ -531,6 +531,14 @@
     const s = K.store.state;
     const free = s.gifts > 0;
     const can = K.store.canOpenGift();
+    const stickerCell = (st) => {
+      const n = s.stickers[st.id];
+      return n
+        ? `<button class="sticker ${st.rarity}" data-act="pet" aria-label="Sticker ${st.name || st.e}">${st.e}${n > 1 ? `<i class="cnt">x${n}</i>` : ''}</button>`
+        : '<div class="sticker locked" aria-label="Chưa có"><b>?</b></div>';
+    };
+    const animeAll = K.STICKERS.filter((x) => x.anime).length;
+    const animeOwned = K.STICKERS.filter((x) => x.anime && s.stickers[x.id]).length;
     app.innerHTML = `
       <section class="screen stickers">
         <header class="topbar">
@@ -548,38 +556,43 @@
           </div>
         </div>
 
-        <div class="legend">${Object.values(K.RARITY).map((r) => `<span style="--rc:${r.color}">● ${r.name}</span>`).join('')}</div>
-        <div class="sticker-grid">
-          ${K.STICKERS.map((st) => {
-            const n = s.stickers[st.id];
-            return n
-              ? `<button class="sticker ${st.rarity}" data-act="pet" aria-label="Sticker ${st.e}">${st.e}${n > 1 ? `<i class="cnt">x${n}</i>` : ''}</button>`
-              : '<div class="sticker locked" aria-label="Chưa có"><b>?</b></div>';
-          }).join('')}
+        <div class="gift-panel anime-panel">
+          <button class="gift-box" data-act="agift" aria-label="Mở hộp quà Anime"${K.store.canOpenAnime() ? '' : ' disabled'}>✨</button>
+          <div class="gift-info">
+            <b>Hộp quà Anime ✨</b>
+            <small>Sticker anime siêu siêu hiếm! Đã sưu tầm ${animeOwned}/${animeAll} nhân vật. Mỗi lần mở ${K.ANIME_COST} 🪙.</small>
+            <button class="btn big" data-act="agift"${K.store.canOpenAnime() ? '' : ' disabled'} style="--c:#ec4899">✨ Mở quà Anime (${K.ANIME_COST} 🪙)</button>
+          </div>
         </div>
+
+        <div class="sticker-grid anime-grid">${K.STICKERS.filter((st) => st.anime).sort((x, y) => K.RARITY[x.rarity].animeWeight - K.RARITY[y.rarity].animeWeight).map(stickerCell).join('')}</div>
+        <div class="legend">${Object.values(K.RARITY).filter((r) => r.weight > 0).map((r) => `<span style="--rc:${r.color}">● ${r.name}</span>`).join('')}</div>
+        <div class="sticker-grid">${K.STICKERS.filter((st) => !st.anime).map(stickerCell).join('')}</div>
       </section>`;
   }
 
-  function openGiftModal() {
-    if (!K.store.canOpenGift()) {
-      K.fx.toast(`Cần ${K.GIFT_COST} 🪙 để mở quà. Chơi thêm nhé!`);
+  function openGiftModal(kind) {
+    const anime = kind === 'anime';
+    if (anime ? !K.store.canOpenAnime() : !K.store.canOpenGift()) {
+      K.fx.toast(`Cần ${anime ? K.ANIME_COST : K.GIFT_COST} 🪙 để mở quà. Chơi thêm nhé!`);
       return;
     }
-    const r = K.store.openGift();
+    const r = anime ? K.store.openAnime() : K.store.openGift();
     if (!r) return;
     const rar = K.RARITY[r.sticker.rarity];
-    const m = modal('<div class="gift-open"><div class="gift-shake">🎁</div><p>Đang mở quà...</p></div>', false);
+    const m = modal(`<div class="gift-open"><div class="gift-shake">${anime ? '✨' : '🎁'}</div><p>Đang mở quà...</p></div>`, false);
     K.audio.sfx('flip');
     setTimeout(() => {
       m.querySelector('.modal').innerHTML = `
         <div class="reveal ${r.sticker.rarity}">
           <div class="sticker-big">${r.sticker.e}</div>
           <h2>${r.isNew ? 'Sticker mới! 🎉' : 'Bạn đã có sticker này rồi'}</h2>
+          ${r.sticker.name ? `<div class="sname">${r.sticker.name}</div>` : ''}
           <div class="rar" style="color:${rar.color}">${rar.name}</div>
           <button class="btn big" data-close style="--c:#22c55e">Tuyệt vời!</button>
         </div>`;
       K.audio.sfx('win');
-      K.fx.confetti(r.sticker.rarity === 'epic' ? 200 : r.sticker.rarity === 'rare' ? 140 : 80);
+      K.fx.confetti(r.sticker.rarity === 'an4' ? 420 : r.sticker.rarity === 'an3' ? 320 : r.sticker.anime ? 240 : r.sticker.rarity === 'epic' ? 200 : r.sticker.rarity === 'rare' ? 140 : 80);
       K.store.checkBadges().forEach((b) => K.fx.toast(`${b.icon} Huy hiệu mới: ${b.name}`));
     }, 1400);
     m.addEventListener('click', (e) => {
@@ -983,6 +996,7 @@
       if (location.hash === '#/') route(); else location.hash = '#/';
     }
     else if (act.dataset.act === 'gift') openGiftModal();
+    else if (act.dataset.act === 'agift') openGiftModal('anime');
     else if (act.dataset.act === 'claim') {
       const n = K.store.claimMission(act.dataset.id);
       if (n) {
