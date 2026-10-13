@@ -50,7 +50,7 @@
     { id: 'learn', icon: '📖', text: 'Học từ mới 1 lần', key: 'learn', goal: 1, reward: 20 },
   ];
   K.MISSIONS = MISSIONS;
-  K.GIFT_COST = 80;
+  K.GIFT_COST = 300;
   K.ANIME_COST = 500; // Hộp quà Anime: mỗi lần mở trừ 500 xu
 
   K.BADGES = BADGES;

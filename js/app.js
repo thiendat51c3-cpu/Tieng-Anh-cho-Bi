@@ -593,7 +593,7 @@
           <button class="btn big" data-close style="--c:#22c55e">Tuyệt vời!</button>
         </div>`;
       K.audio.sfx('win');
-      K.fx.confetti(r.sticker.rarity === 'an4' ? 420 : r.sticker.rarity === 'an3' ? 320 : r.sticker.anime ? 240 : r.sticker.rarity === 'epic' ? 200 : r.sticker.rarity === 'rare' ? 140 : 80);
+      K.fx.confetti(r.sticker.rarity === 'an4' ? 420 : r.sticker.rarity === 'legend' ? 360 : r.sticker.rarity === 'an3' ? 320 : r.sticker.anime ? 240 : r.sticker.rarity === 'epic' ? 200 : r.sticker.rarity === 'rare' ? 140 : 80);
       K.store.checkBadges().forEach((b) => K.fx.toast(`${b.icon} Huy hiệu mới: ${b.name}`));
     }, 1400);
     m.addEventListener('click', (e) => {
