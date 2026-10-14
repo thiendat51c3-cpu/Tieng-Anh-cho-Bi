@@ -412,10 +412,9 @@
         if (p) p.style.width = Math.min(100, (done / total) * 100) + '%';
       },
       reward(n, el) {
-        ctx.earned += n;
-        K.store.addCoins(n);
+        ctx.earned += n; // chỉ được cộng vào ví khi kết thúc ván nếu vượt kỷ lục (hoặc chơi lần đầu)
         const pill = screen.querySelector('[data-coins]');
-        if (pill) pill.textContent = '🪙 ' + K.store.state.coins;
+        if (pill) pill.textContent = '🪙 ' + (K.store.state.coins + ctx.earned);
         K.fx.floatText(el, '+' + n + ' 🪙');
       },
       mastered(w) {
@@ -446,23 +445,33 @@
     const scored = game.scored !== false;
     let starCount = 0;
     let improved = false;
+    let eligible = true;
+    let starGain = 0;
+    let prevBest = 0;
 
     if (scored) {
       const acc = res.total ? res.correct / res.total : 0;
       starCount = res.stars != null ? res.stars : acc >= 0.9 ? 3 : acc >= 0.7 ? 2 : acc >= 0.4 ? 1 : 0;
-      const bonus = starCount * 10;
-      ctx.earned += bonus;
-      K.store.addCoins(bonus);
+      const rec = K.store.record(topic.id, game.id, starCount);
+      improved = rec.improved;
+      // Chơi lại chỉ được cộng xu và sao khi tốt hơn kỷ lục cũ; bằng hoặc kém hơn thì không được cộng
+      eligible = rec.first || rec.improved;
+      starGain = rec.improved ? starCount - rec.prev : 0;
+      if (eligible) {
+        ctx.earned += starCount * 10;
+        K.store.addCoins(ctx.earned);
+      } else {
+        ctx.earned = 0;
+      }
+      prevBest = rec.prev;
       st.stats.games++;
       if (starCount === 3) st.stats.perfect++;
       st.gamesPlayed[game.id] = true;
-      K.store.addStars(starCount); // cộng sao mỗi lần chơi (trước khi cập nhật kỷ lục)
-      improved = K.store.record(topic.id, game.id, starCount).improved;
       K.store.bumpDaily('games', 1);
       K.store.bumpDaily('correct', res.correct || 0);
     } else {
-      ctx.earned += 20;
-      K.store.addCoins(20);
+      if (st.learned[topic.id]) ctx.earned = 0; // học lại thì không cộng thêm xu
+      else { ctx.earned = 20; K.store.addCoins(20); }
       st.learned[topic.id] = true;
       K.store.bumpDaily('learn', 1);
     }
@@ -491,7 +500,8 @@
         ${scored ? `<div class="big-stars">${[0, 1, 2].map((i) => `<span class="${i < starCount ? 'on' : ''}" style="animation-delay:${0.25 * i + 0.2}s">★</span>`).join('')}</div>` : ''}
         <p class="res-detail">${detail}</p>
         <p class="res-sub">${sub}</p>
-        <div class="res-coins">+${ctx.earned} 🪙${scored && starCount > 0 ? ` · +${starCount} ⭐` : ''}${improved && starCount > 0 ? ' · Kỷ lục mới! 🏅' : ''}</div>
+        <div class="res-coins">+${ctx.earned} 🪙${starGain > 0 ? ` · +${starGain} ⭐` : ''}${improved && starCount > 0 ? ' · Kỷ lục mới! 🏅' : ''}</div>
+        ${scored && !eligible ? `<div class="res-note">Chưa vượt kỷ lục cũ (${prevBest} ⭐) nên lần này không được cộng xu và sao. Cố lên nhé! 💪</div>` : ''}
         ${claimable ? '<div class="res-note">🎯 Có nhiệm vụ đã hoàn thành! Về trang chủ nhận thưởng nhé.</div>' : ''}
         ${fresh.map((b) => `<div class="new-badge"><span>${b.icon}</span> Huy hiệu mới: <b>${b.name}</b></div>`).join('')}
         <div class="res-actions">

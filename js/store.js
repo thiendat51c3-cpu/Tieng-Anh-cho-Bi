@@ -24,7 +24,6 @@
     stickers: {}, // id -> số lượng
     gifts: 0, // hộp quà miễn phí đang có
     lastLevel: 1,
-    starBank: 0, // tổng sao tích lũy mọi lần chơi (kể cả chơi lại)
     settings: { sound: true, speech: true, slow: true },
   });
 
@@ -88,7 +87,6 @@
     K.STICKERS.forEach((st) => { if (o.stickers && o.stickers[st.id]) d.stickers[st.id] = Math.max(1, num(o.stickers[st.id], 1e4)); });
     d.gifts = num(o.gifts, 1e4);
     d.lastLevel = Math.max(1, num(o.lastLevel, 1e5));
-    d.starBank = Math.max(num(o.starBank, 1e7), Object.values(d.best).reduce((n, v) => n + v, 0));
     ['sound', 'speech', 'slow'].forEach((k) => { if (o.settings && typeof o.settings[k] === 'boolean') d.settings[k] = o.settings[k]; });
     return d;
   }
@@ -113,7 +111,6 @@
     out.badges = union(a.badges, b.badges);
     out.gifts = Math.max(a.gifts, b.gifts);
     out.lastLevel = Math.max(a.lastLevel, b.lastLevel);
-    out.starBank = Math.max(a.starBank, b.starBank);
     out.streak = a.streak.last > b.streak.last ? a.streak : b.streak.last > a.streak.last ? b.streak : { count: Math.max(a.streak.count, b.streak.count), last: a.streak.last };
     if (a.daily.date !== b.daily.date) out.daily = clone(a.daily.date > b.daily.date ? a.daily : b.daily);
     else {
@@ -245,7 +242,7 @@
         return {
           id, name: d.name, avatar: d.avatar, coins: d.coins, welcomed: d.welcomed, active: id === box.active,
           level: Math.floor(d.coins / COINS_PER_LEVEL) + 1,
-          stars: Math.max(d.starBank || 0, Object.values(d.best).reduce((n, v) => n + v, 0)),
+          stars: Object.values(d.best).reduce((n, v) => n + v, 0),
         };
       });
     },
@@ -386,20 +383,18 @@
 
     bestStars(topic, game) { return state.best[`${topic}/${game}`] || 0; },
     topicStars(topic) { return (K.getTopic(topic) ? K.gamesFor(K.getTopic(topic)) : K.gameOrder).reduce((n, g) => n + this.bestStars(topic, g), 0); },
-    // Tổng sao: cộng dồn mọi lần chơi (chơi lại vẫn được cộng); kỷ lục từng trò (state.best) chỉ tăng khi được nhiều sao hơn
+    // Tổng sao = tổng kỷ lục của từng trò (chỉ tăng khi chơi lại được nhiều sao hơn)
     totalStars() {
-      return Math.max(state.starBank || 0, Object.values(state.best).reduce((n, v) => n + v, 0));
-    },
-    addStars(n) {
-      state.starBank = this.totalStars() + n;
-      this.save();
+      return Object.values(state.best).reduce((n, v) => n + v, 0);
     },
 
     record(topic, game, stars) {
+      const key = `${topic}/${game}`;
       const prev = this.bestStars(topic, game);
-      if (stars > prev) state.best[`${topic}/${game}`] = stars;
+      const first = state.best[key] === undefined; // lần chơi đầu tiên của trò này
+      if (first || stars > prev) state.best[key] = stars;
       this.save();
-      return { prev, improved: stars > prev };
+      return { prev, improved: stars > prev, first };
     },
 
     markMastered(en) {
