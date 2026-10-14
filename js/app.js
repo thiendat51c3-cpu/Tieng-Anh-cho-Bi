@@ -456,6 +456,7 @@
       st.stats.games++;
       if (starCount === 3) st.stats.perfect++;
       st.gamesPlayed[game.id] = true;
+      K.store.addStars(starCount); // cộng sao mỗi lần chơi (trước khi cập nhật kỷ lục)
       improved = K.store.record(topic.id, game.id, starCount).improved;
       K.store.bumpDaily('games', 1);
       K.store.bumpDaily('correct', res.correct || 0);
@@ -490,7 +491,7 @@
         ${scored ? `<div class="big-stars">${[0, 1, 2].map((i) => `<span class="${i < starCount ? 'on' : ''}" style="animation-delay:${0.25 * i + 0.2}s">★</span>`).join('')}</div>` : ''}
         <p class="res-detail">${detail}</p>
         <p class="res-sub">${sub}</p>
-        <div class="res-coins">+${ctx.earned} 🪙${improved && starCount > 0 ? ' · Kỷ lục mới! 🏅' : ''}</div>
+        <div class="res-coins">+${ctx.earned} 🪙${scored && starCount > 0 ? ` · +${starCount} ⭐` : ''}${improved && starCount > 0 ? ' · Kỷ lục mới! 🏅' : ''}</div>
         ${claimable ? '<div class="res-note">🎯 Có nhiệm vụ đã hoàn thành! Về trang chủ nhận thưởng nhé.</div>' : ''}
         ${fresh.map((b) => `<div class="new-badge"><span>${b.icon}</span> Huy hiệu mới: <b>${b.name}</b></div>`).join('')}
         <div class="res-actions">
